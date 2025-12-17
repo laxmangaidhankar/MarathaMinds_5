@@ -8,295 +8,27 @@ if (!isset($_SESSION['admin_id'])) {
 }
 
 $conn = getDBConnection();
-$admin_id = $_SESSION['admin_id'];
 
 // Handle actions
 if (isset($_GET['action'])) {
     switch ($_GET['action']) {
-        case 'approve':
-            $request_id = intval($_GET['id']);
-            approveVolunteerRequest($conn, $admin_id, $request_id);
-            break;
-            
-        case 'reject':
-            $request_id = intval($_GET['id']);
-            rejectVolunteerRequest($conn, $admin_id, $request_id);
-            break;
-            
         case 'view':
             $request_id = intval($_GET['id']);
             viewVolunteerRequest($request_id);
             exit();
             
-        case 'check_emails':
-            checkInvalidEmails($conn);
-            exit();
-            
-        case 'fix_database':
-            fixDatabaseConstraint($conn);
-            exit();
+        case 'delete':
+            $request_id = intval($_GET['id']);
+            deleteRequest($conn, $request_id);
+            break;
     }
-}
-
-function fixDatabaseConstraint($conn) {
-    header('Content-Type: text/html; charset=utf-8');
-    echo '<!DOCTYPE html><html><head><title>Fix Database</title>';
-    echo '<style>body{font-family: Arial; padding: 20px;} pre{background:#f5f5f5; padding:10px; border-radius:5px;}</style>';
-    echo '</head><body>';
-    echo '<h2>Database Constraint Fix</h2>';
-    
-    // Check current foreign key
-    $sql = "SHOW CREATE TABLE volunteers";
-    $result = mysqli_query($conn, $sql);
-    
-    if ($row = mysqli_fetch_assoc($result)) {
-        echo '<h3>Current volunteers table structure:</h3>';
-        echo '<pre>' . htmlspecialchars($row['Create Table']) . '</pre>';
-        
-        // Try to fix the constraint
-        echo '<h3>Attempting to fix foreign key constraint...</h3>';
-        
-        // Check if the constraint exists
-        $fk_sql = "SELECT CONSTRAINT_NAME 
-                   FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE 
-                   WHERE TABLE_NAME = 'volunteers' 
-                   AND REFERENCED_TABLE_NAME = 'volunteer_requests_backup'";
-        $fk_result = mysqli_query($conn, $fk_sql);
-        
-        if (mysqli_num_rows($fk_result) > 0) {
-            $fk = mysqli_fetch_assoc($fk_result);
-            $constraint_name = $fk['CONSTRAINT_NAME'];
-            
-            echo "<p>Found constraint: <strong>{$constraint_name}</strong></p>";
-            echo "<p>This constraint references 'volunteer_requests_backup' instead of 'volunteer_requests'.</p>";
-            
-            // Drop the constraint
-            $drop_sql = "ALTER TABLE volunteers DROP FOREIGN KEY {$constraint_name}";
-            if (mysqli_query($conn, $drop_sql)) {
-                echo "<p style='color:green;'>✓ Successfully dropped constraint: {$constraint_name}</p>";
-                
-                // Add new constraint
-                $add_sql = "ALTER TABLE volunteers 
-                           ADD CONSTRAINT volunteers_ibfk_1 
-                           FOREIGN KEY (request_id) 
-                           REFERENCES volunteer_requests(id) 
-                           ON DELETE CASCADE ON UPDATE CASCADE";
-                
-                if (mysqli_query($conn, $add_sql)) {
-                    echo "<p style='color:green;'>✓ Successfully added new constraint to volunteer_requests table</p>";
-                } else {
-                    echo "<p style='color:red;'>✗ Failed to add new constraint: " . mysqli_error($conn) . "</p>";
-                }
-            } else {
-                echo "<p style='color:red;'>✗ Failed to drop constraint: " . mysqli_error($conn) . "</p>";
-            }
-        } else {
-            echo "<p>No constraint found referencing 'volunteer_requests_backup'</p>";
-        }
-    } else {
-        echo "<p style='color:red;'>Could not get table structure</p>";
-    }
-    
-    echo '<p><a href="admin_panel.php">← Back to Admin Panel</a></p>';
-    echo '</body></html>';
-    exit();
-}
-
-function approveVolunteerRequest($conn, $admin_id, $request_id) {
-    $invite_code = 'SAR' . strtoupper(substr(md5(uniqid()), 0, 8));
-    
-    // First, get the request data
-    $sql_select = "SELECT * FROM volunteer_requests WHERE id = ?";
-    $stmt_select = mysqli_prepare($conn, $sql_select);
-    mysqli_stmt_bind_param($stmt_select, "i", $request_id);
-    mysqli_stmt_execute($stmt_select);
-    $request = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt_select));
-    
-    if (!$request) {
-        $_SESSION['error'] = "❌ Request not found";
-        header("Location: admin_panel.php");
-        exit();
-    }
-    
-    // Validate that email is valid
-    $email = trim($request['email']);
-    if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $_SESSION['error'] = "❌ Cannot approve: Invalid email address ({$email}). Please ask volunteer to provide a valid email.";
-        header("Location: admin_panel.php");
-        exit();
-    }
-    
-    // Start transaction
-    mysqli_begin_transaction($conn);
-    
-    try {
-        // First check if volunteer already exists in volunteers table
-        $check_sql = "SELECT id FROM volunteers WHERE email = ?";
-        $check_stmt = mysqli_prepare($conn, $check_sql);
-        mysqli_stmt_bind_param($check_stmt, "s", $email);
-        mysqli_stmt_execute($check_stmt);
-        $exists = mysqli_stmt_get_result($check_stmt)->num_rows > 0;
-        
-        if ($exists) {
-            // Volunteer already exists, just update the request status
-            $sql = "UPDATE volunteer_requests 
-                    SET status = 'approved', 
-                        invite_code = ?
-                    WHERE id = ?";
-            
-            $stmt = mysqli_prepare($conn, $sql);
-            mysqli_stmt_bind_param($stmt, "si", $invite_code, $request_id);
-            
-            if (!mysqli_stmt_execute($stmt)) {
-                throw new Exception("Failed to update request status: " . mysqli_error($conn));
-            }
-            
-            $_SESSION['success'] = "✅ Volunteer already exists in system! Updated request status to approved.";
-        } else {
-            // Volunteer doesn't exist, create new volunteer
-            
-            // Check if password exists in request and is valid
-            $password = '';
-            $password_message = '';
-            
-            if (!empty($request['password']) && strlen($request['password']) >= 60) {
-                // Password is already hashed (60+ chars indicates bcrypt hash)
-                $password = $request['password'];
-                $password_message = "their registered password";
-            } else {
-                // Generate new password
-                $temp_password = bin2hex(random_bytes(6));
-                $password = password_hash($temp_password, PASSWORD_DEFAULT);
-                $password_message = "temporary password: <strong>{$temp_password}</strong>";
-            }
-            
-            // TEMPORARY FIX: Create volunteer without request_id foreign key
-            // First, let's check if we can insert with request_id
-            $volunteer_sql = "INSERT INTO volunteers 
-                (full_name, age, gender, email, mobile_number, education, skills, 
-                 ngo_name, role_position, request_message, password, passport_photo, 
-                 aadhaar_card, school_certificate, status, invite_code, created_at) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', ?, NOW())";
-            
-            $volunteer_stmt = mysqli_prepare($conn, $volunteer_sql);
-            
-            if (!$volunteer_stmt) {
-                throw new Exception("Failed to prepare volunteer statement: " . mysqli_error($conn));
-            }
-            
-            $bind_result = mysqli_stmt_bind_param($volunteer_stmt, "sisssssssssssss", 
-                $request['full_name'],             // full_name
-                $request['age'],                   // age
-                $request['gender'],                // gender
-                $email,                            // email
-                $request['mobile_number'],         // mobile_number
-                $request['education'],             // education
-                $request['skills'],                // skills
-                $request['ngo_name'],              // ngo_name
-                $request['role_position'],         // role_position
-                $request['request_message'],       // request_message
-                $password,                         // password
-                $request['passport_photo'],        // passport_photo
-                $request['aadhaar_card'],          // aadhaar_card
-                $request['school_certificate'],    // school_certificate
-                $invite_code                       // invite_code
-            );
-            
-            if (!$bind_result) {
-                throw new Exception("Failed to bind parameters: " . mysqli_stmt_error($volunteer_stmt));
-            }
-            
-            if (!mysqli_stmt_execute($volunteer_stmt)) {
-                $error_msg = mysqli_error($conn);
-                
-                // If it's a foreign key constraint error, try without request_id
-                if (strpos($error_msg, 'foreign key constraint') !== false) {
-                    echo "<p style='color:orange;'>⚠ Foreign key constraint issue detected. Trying alternative approach...</p>";
-                    
-                    // Alternative: Update the volunteer later with request_id
-                    $volunteer_id = mysqli_insert_id($conn);
-                    if ($volunteer_id) {
-                        // Try to update with request_id after insertion
-                        $update_sql = "UPDATE volunteers SET request_id = ? WHERE id = ?";
-                        $update_stmt = mysqli_prepare($conn, $update_sql);
-                        mysqli_stmt_bind_param($update_stmt, "ii", $request['id'], $volunteer_id);
-                        
-                        if (!mysqli_stmt_execute($update_stmt)) {
-                            // Even if this fails, we still have a volunteer created
-                            echo "<p style='color:orange;'>⚠ Could not set request_id due to constraint, but volunteer was created.</p>";
-                        }
-                    }
-                } else {
-                    throw new Exception("Failed to execute volunteer insertion: " . $error_msg);
-                }
-            }
-            
-            $volunteer_id = mysqli_insert_id($conn);
-            
-            // Now update the request status
-            $sql = "UPDATE volunteer_requests 
-                    SET status = 'approved', 
-                        invite_code = ?
-                    WHERE id = ?";
-            
-            $stmt = mysqli_prepare($conn, $sql);
-            if (!$stmt) {
-                throw new Exception("Failed to prepare update statement: " . mysqli_error($conn));
-            }
-            
-            mysqli_stmt_bind_param($stmt, "si", $invite_code, $request_id);
-            
-            if (!mysqli_stmt_execute($stmt)) {
-                throw new Exception("Failed to update request status: " . mysqli_error($conn));
-            }
-            
-            $_SESSION['success'] = "✅ Volunteer approved successfully!<br><br>
-                                  <strong>Volunteer Login Details:</strong><br>
-                                  • Email: <strong>{$email}</strong><br>
-                                  • Using {$password_message}<br>
-                                  • Invite Code: <strong>{$invite_code}</strong><br>
-                                  • Volunteer ID: <strong>VOL-" . str_pad($volunteer_id, 6, '0', STR_PAD_LEFT) . "</strong><br><br>
-                                  <em>The volunteer can now login at: <strong>volunteer_login.php</strong></em>";
-        }
-        
-        // Commit transaction
-        mysqli_commit($conn);
-        
-    } catch (Exception $e) {
-        // Rollback transaction on error
-        mysqli_rollback($conn);
-        $_SESSION['error'] = "❌ " . $e->getMessage();
-        header("Location: admin_panel.php");
-        exit();
-    }
-    
-    header("Location: admin_panel.php");
-    exit();
-}
-
-function rejectVolunteerRequest($conn, $admin_id, $request_id) {
-    $sql = "UPDATE volunteer_requests 
-            SET status = 'rejected'
-            WHERE id = ?";
-    
-    $stmt = mysqli_prepare($conn, $sql);
-    mysqli_stmt_bind_param($stmt, "i", $request_id);
-    
-    if (mysqli_stmt_execute($stmt)) {
-        $_SESSION['success'] = "✅ Request rejected";
-    } else {
-        $_SESSION['error'] = "❌ Failed to reject request: " . mysqli_error($conn);
-    }
-    
-    header("Location: admin_panel.php");
-    exit();
 }
 
 function viewVolunteerRequest($request_id) {
     require_once 'config/config.php';
     $conn = getDBConnection();
     
-    // Clear any previous output
+    // IMPORTANT: Clear any previous output
     if (ob_get_length()) ob_clean();
     
     // Set proper headers
@@ -315,85 +47,135 @@ function viewVolunteerRequest($request_id) {
         exit();
     }
     
-    // Fix file URLs
-    function ensureUrl($path) {
-        if (empty($path)) return '';
+    // DEBUG: Check what's in the database
+    error_log("DEBUG - Request ID: " . $request_id);
+    error_log("DEBUG - Passport Photo Path: " . $request['passport_photo']);
+    error_log("DEBUG - Aadhaar Card Path: " . $request['aadhaar_card']);
+    error_log("DEBUG - School Certificate Path: " . $request['school_certificate']);
+    
+    // Function to check if file exists
+    function checkFileExists($path) {
+        if (empty($path)) return false;
         
-        $base_url = 'http://localhost/sarathi_volunteer_system/';
+        // Remove base URL if present
+        $local_path = str_replace('http://localhost/sarathi_volunteer_system/', '', $path);
+        $local_path = str_replace('http://localhost/', '', $local_path);
         
-        // If already full URL, return as is
+        // Try multiple locations
+        $possible_paths = [
+            'C:/xampp/htdocs/sarathi_volunteer_system/' . $local_path,
+            'C:/xampp/htdocs/' . $local_path,
+            $_SERVER['DOCUMENT_ROOT'] . '/' . $local_path,
+            $local_path
+        ];
+        
+        foreach ($possible_paths as $test_path) {
+            if (file_exists($test_path)) {
+                error_log("DEBUG - File found at: " . $test_path);
+                return true;
+            }
+        }
+        
+        error_log("DEBUG - File NOT found: " . $path);
+        return false;
+    }
+    
+    // Function to fix file paths - IMPROVED VERSION
+    function fixFilePath($path, $type = '') {
+        if (empty($path)) {
+            error_log("DEBUG - Empty path for type: " . $type);
+            return '';
+        }
+        
+        // Check if already a valid URL
         if (strpos($path, 'http://') === 0 || strpos($path, 'https://') === 0) {
+            error_log("DEBUG - Already a URL: " . $path);
             return $path;
         }
         
-        // Ensure it has the base URL
-        return $base_url . ltrim($path, '/');
+        // Base URL
+        $base_url = 'http://localhost/sarathi_volunteer_system/';
+        
+        // Clean the path
+        $clean_path = ltrim($path, './');
+        
+        // Check what type of path we have
+        if (strpos($clean_path, 'assets/uploads/') === 0) {
+            // Already has correct path structure
+            $final_path = $base_url . $clean_path;
+            error_log("DEBUG - Fixed path (assets): " . $final_path);
+            return $final_path;
+        }
+        
+        // If it's just a filename, determine folder
+        if (strpos($clean_path, '/') === false) {
+            if (strpos($clean_path, 'passport') !== false) {
+                $final_path = $base_url . 'assets/uploads/passport/' . $clean_path;
+            } elseif (strpos($clean_path, 'aadhaar') !== false) {
+                $final_path = $base_url . 'assets/uploads/aadhaar/' . $clean_path;
+            } elseif (strpos($clean_path, 'certificate') !== false) {
+                $final_path = $base_url . 'assets/uploads/certificate/' . $clean_path;
+            } else {
+                $final_path = $base_url . 'assets/uploads/' . $clean_path;
+            }
+            error_log("DEBUG - Fixed path (filename only): " . $final_path);
+            return $final_path;
+        }
+        
+        // Default: prepend base URL
+        $final_path = $base_url . $clean_path;
+        error_log("DEBUG - Fixed path (default): " . $final_path);
+        return $final_path;
     }
     
-    // Fix URLs for document paths
-    $request['passport_photo'] = ensureUrl($request['passport_photo']);
-    $request['aadhaar_card'] = ensureUrl($request['aadhaar_card']);
-    $request['school_certificate'] = ensureUrl($request['school_certificate']);
+    // Fix document paths
+    $request['passport_photo'] = fixFilePath($request['passport_photo'], 'passport');
+    $request['aadhaar_card'] = fixFilePath($request['aadhaar_card'], 'aadhaar');
+    $request['school_certificate'] = fixFilePath($request['school_certificate'], 'certificate');
     
-    // Remove password from response for security
-    unset($request['password']);
+    // Add debug information
+    $request['debug'] = [
+        'original_passport' => $request['passport_photo'],
+        'original_aadhaar' => $request['aadhaar_card'],
+        'original_certificate' => $request['school_certificate'],
+        'passport_exists' => checkFileExists($request['passport_photo']),
+        'aadhaar_exists' => checkFileExists($request['aadhaar_card']),
+        'certificate_exists' => checkFileExists($request['school_certificate']),
+        'base_url' => 'http://localhost/sarathi_volunteer_system/',
+        'document_root' => $_SERVER['DOCUMENT_ROOT']
+    ];
     
     echo json_encode($request);
     exit();
 }
 
-function checkInvalidEmails($conn) {
-    header('Content-Type: text/html; charset=utf-8');
-    echo '<!DOCTYPE html><html><head><title>Invalid Emails Check</title>';
-    echo '<style>body{font-family: Arial; padding: 20px;} table{border-collapse: collapse; width: 100%;} th,td{padding: 8px; border:1px solid #ccc;}</style>';
-    echo '</head><body>';
-    echo '<h2>Invalid Email Addresses in Volunteer Requests</h2>';
+function deleteRequest($conn, $request_id) {
+    $sql = "DELETE FROM volunteer_requests WHERE id = ?";
+    $stmt = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($stmt, "i", $request_id);
     
-    $sql = "SELECT id, full_name, email, mobile_number, created_at 
-            FROM volunteer_requests 
-            WHERE status = 'pending' 
-            AND (email IS NULL OR email = '' OR email = '0' OR email LIKE '%example.com%' 
-                 OR email NOT LIKE '%@%.%' OR email NOT LIKE '%@%')";
-    
-    $result = mysqli_query($conn, $sql);
-    
-    if (mysqli_num_rows($result) > 0) {
-        echo '<p><strong>Found ' . mysqli_num_rows($result) . ' requests with invalid emails:</strong></p>';
-        echo '<table>';
-        echo '<tr><th>ID</th><th>Name</th><th>Email</th><th>Mobile</th><th>Date</th><th>Action</th></tr>';
-        
-        while($row = mysqli_fetch_assoc($result)) {
-            echo '<tr>';
-            echo '<td>VR-' . str_pad($row['id'], 6, '0', STR_PAD_LEFT) . '</td>';
-            echo '<td>' . htmlspecialchars($row['full_name']) . '</td>';
-            echo '<td style="color: red;">' . htmlspecialchars($row['email']) . '</td>';
-            echo '<td>' . htmlspecialchars($row['mobile_number']) . '</td>';
-            echo '<td>' . $row['created_at'] . '</td>';
-            echo '<td><a href="admin_contact.php?search=' . urlencode($row['full_name']) . '">Contact</a></td>';
-            echo '</tr>';
-        }
-        echo '</table>';
+    if (mysqli_stmt_execute($stmt)) {
+        $_SESSION['success'] = "✅ Request deleted successfully";
     } else {
-        echo '<p style="color: green;">No pending requests with invalid emails found.</p>';
+        $_SESSION['error'] = "❌ Failed to delete request";
     }
     
-    echo '<p><a href="admin_panel.php">← Back to Admin Panel</a></p>';
-    echo '</body></html>';
+    header("Location: admin_requests.php");
     exit();
 }
+
+// Get all requests with their status
+$sql = "SELECT * FROM volunteer_requests ORDER BY created_at DESC";
+$result = mysqli_query($conn, $sql);
 
 // Get statistics
 $stats_sql = "SELECT 
     (SELECT COUNT(*) FROM volunteer_requests WHERE status = 'pending') as pending,
     (SELECT COUNT(*) FROM volunteer_requests WHERE status = 'approved') as approved,
     (SELECT COUNT(*) FROM volunteer_requests WHERE status = 'rejected') as rejected,
-    (SELECT COUNT(*) FROM volunteers WHERE status = 'active') as active_volunteers";
+    (SELECT COUNT(*) FROM volunteer_requests) as total";
 $stats_result = mysqli_query($conn, $stats_sql);
 $stats = mysqli_fetch_assoc($stats_result);
-
-// Get pending requests
-$pending_sql = "SELECT * FROM volunteer_requests WHERE status = 'pending' ORDER BY created_at DESC";
-$pending_result = mysqli_query($conn, $pending_sql);
 ?>
 
 <!DOCTYPE html>
@@ -401,7 +183,7 @@ $pending_result = mysqli_query($conn, $pending_sql);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel - Sarathi</title>
+    <title>Volunteer Requests - Admin Panel</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -427,7 +209,6 @@ $pending_result = mysqli_query($conn, $pending_sql);
             min-height: 100vh;
         }
         
-        /* Sidebar */
         .sidebar {
             width: var(--sidebar-width);
             background: linear-gradient(180deg, var(--primary), #1e40af);
@@ -464,7 +245,6 @@ $pending_result = mysqli_query($conn, $pending_sql);
             border-left-color: var(--secondary);
         }
         
-        /* Main Content */
         .main-content {
             flex: 1;
             margin-left: var(--sidebar-width);
@@ -482,7 +262,6 @@ $pending_result = mysqli_query($conn, $pending_sql);
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
         
-        /* Stats Cards */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -501,7 +280,7 @@ $pending_result = mysqli_query($conn, $pending_sql);
         .stat-card.pending { border-top-color: var(--warning); }
         .stat-card.approved { border-top-color: var(--secondary); }
         .stat-card.rejected { border-top-color: var(--danger); }
-        .stat-card.volunteers { border-top-color: var(--info); }
+        .stat-card.total { border-top-color: var(--info); }
         
         .stat-number {
             font-size: 2.5rem;
@@ -509,7 +288,6 @@ $pending_result = mysqli_query($conn, $pending_sql);
             margin-bottom: 10px;
         }
         
-        /* Tables */
         .table-container {
             background: var(--card-bg);
             border-radius: 10px;
@@ -569,7 +347,7 @@ $pending_result = mysqli_query($conn, $pending_sql);
         .status-approved { background: #d1fae5; color: #065f46; }
         .status-rejected { background: #fee2e2; color: #991b1b; }
         
-        /* Modal */
+        /* Modal Styles */
         .modal {
             display: none;
             position: fixed;
@@ -635,7 +413,6 @@ $pending_result = mysqli_query($conn, $pending_sql);
             border-top: 1px solid var(--border);
         }
         
-        /* Alert Messages */
         .alert {
             padding: 15px;
             border-radius: 10px;
@@ -657,10 +434,18 @@ $pending_result = mysqli_query($conn, $pending_sql);
             border: 1px solid #fca5a5;
         }
         
-        .no-data {
-            text-align: center;
-            padding: 40px;
-            color: var(--text-light);
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
         
         .file-path {
@@ -674,49 +459,37 @@ $pending_result = mysqli_query($conn, $pending_sql);
             word-break: break-all;
         }
         
-        .admin-tools {
+        .action-buttons {
             display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
+            gap: 8px;
             flex-wrap: wrap;
         }
         
-        .email-badge {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            margin-left: 8px;
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
         }
         
-        .email-valid { background: #d1fae5; color: #065f46; }
-        .email-invalid { background: #fee2e2; color: #dc2626; }
-        
-        /* Disabled button styles */
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none !important;
-            box-shadow: none !important;
-        }
-        
-        .db-fix-btn {
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-            color: white;
-            border: none;
+        .filter-btn {
             padding: 8px 16px;
+            border: 1px solid var(--border);
+            background: white;
             border-radius: 6px;
             cursor: pointer;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.3s ease;
+            font-weight: 500;
         }
         
-        .db-fix-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        .filter-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-light);
         }
     </style>
 </head>
@@ -729,9 +502,9 @@ $pending_result = mysqli_query($conn, $pending_sql);
         </div>
         
         <ul class="sidebar-menu">
-            <li><a href="admin_panel.php" class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+            <li><a href="admin_panel.php"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
             <li><a href="admin_volunteers.php"><i class="fas fa-users"></i> Volunteers</a></li>
-            <li><a href="admin_requests.php"><i class="fas fa-user-clock"></i> Requests</a></li>
+            <li><a href="admin_requests.php" class="active"><i class="fas fa-user-clock"></i> Requests</a></li>
             <li><a href="admin_contact.php"><i class="fas fa-envelope"></i> Messages</a></li>
             <li><a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
         </ul>
@@ -742,24 +515,14 @@ $pending_result = mysqli_query($conn, $pending_sql);
         <!-- Header -->
         <div class="header">
             <div>
-                <h1>Welcome, <?php echo $_SESSION['admin_name']; ?>!</h1>
-                <p style="color: var(--text-light);"><?php echo $_SESSION['org_name'] ?? 'Sarathi Admin Panel'; ?></p>
+                <h1>Volunteer Requests Management</h1>
+                <p style="color: var(--text-light);">Manage all volunteer applications</p>
             </div>
-            <div style="display: flex; gap: 10px;">
-                <span style="background: var(--primary); color: white; padding: 8px 15px; border-radius: 20px;">
-                    <i class="fas fa-user-shield"></i> Admin
-                </span>
+            <div>
+                <button class="btn btn-info" onclick="window.location.href='admin_panel.php'">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </button>
             </div>
-        </div>
-        
-        <!-- Admin Tools -->
-        <div class="admin-tools">
-            <a href="admin_panel.php?action=check_emails" class="btn btn-warning">
-                <i class="fas fa-envelope"></i> Check Invalid Emails
-            </a>
-            <a href="admin_panel.php?action=fix_database" class="db-fix-btn">
-                <i class="fas fa-database"></i> Fix Database Constraint
-            </a>
         </div>
         
         <!-- Alert Messages -->
@@ -777,13 +540,24 @@ $pending_result = mysqli_query($conn, $pending_sql);
         
         <!-- Statistics -->
         <div class="stats-grid">
+            <div class="stat-card total">
+                <div class="stat-number"><?php echo $stats['total']; ?></div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-inbox" style="font-size: 1.5rem;"></i>
+                    <div>
+                        <h3>Total</h3>
+                        <p style="color: var(--text-light); font-size: 0.9rem;">All requests</p>
+                    </div>
+                </div>
+            </div>
+            
             <div class="stat-card pending">
                 <div class="stat-number"><?php echo $stats['pending']; ?></div>
                 <div style="display: flex; align-items: center; gap: 10px;">
                     <i class="fas fa-clock" style="font-size: 1.5rem;"></i>
                     <div>
                         <h3>Pending</h3>
-                        <p style="color: var(--text-light); font-size: 0.9rem;">Awaiting approval</p>
+                        <p style="color: var(--text-light); font-size: 0.9rem;">Awaiting review</p>
                     </div>
                 </div>
             </div>
@@ -809,78 +583,88 @@ $pending_result = mysqli_query($conn, $pending_sql);
                     </div>
                 </div>
             </div>
-            
-            <div class="stat-card volunteers">
-                <div class="stat-number"><?php echo $stats['active_volunteers']; ?></div>
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <i class="fas fa-users" style="font-size: 1.5rem;"></i>
-                    <div>
-                        <h3>Volunteers</h3>
-                        <p style="color: var(--text-light); font-size: 0.9rem;">Active volunteers</p>
-                    </div>
-                </div>
-            </div>
         </div>
         
-        <!-- Pending Requests Table -->
+        <!-- Filter Buttons -->
+        <div class="filter-buttons">
+            <button class="filter-btn active" onclick="filterRequests('all')">All Requests</button>
+            <button class="filter-btn" onclick="filterRequests('pending')">Pending</button>
+            <button class="filter-btn" onclick="filterRequests('approved')">Approved</button>
+            <button class="filter-btn" onclick="filterRequests('rejected')">Rejected</button>
+        </div>
+        
+        <!-- Requests Table -->
         <div class="table-container">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h2><i class="fas fa-user-clock"></i> Pending Volunteer Requests</h2>
-                <span class="status-badge status-pending"><?php echo $stats['pending']; ?> Requests</span>
+                <h2><i class="fas fa-user-clock"></i> All Volunteer Requests</h2>
+                <span class="status-badge status-pending"><?php echo $stats['total']; ?> Requests</span>
             </div>
             
-            <?php if(mysqli_num_rows($pending_result) > 0): ?>
-                <table>
+            <?php if(mysqli_num_rows($result) > 0): ?>
+                <table id="requestsTable">
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Name</th>
-                            <th>Contact</th>
-                            <th>NGO</th>
+                            <th>Applicant Details</th>
+                            <th>Contact Info</th>
+                            <th>NGO & Role</th>
+                            <th>Status</th>
                             <th>Submitted</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php while($row = mysqli_fetch_assoc($pending_result)): 
-                            // Check if email is valid
-                            $email = trim($row['email']);
-                            $is_valid_email = !empty($email) && filter_var($email, FILTER_VALIDATE_EMAIL);
+                        <?php while($row = mysqli_fetch_assoc($result)): 
+                            // Ensure all fields have values
+                            $row['education'] = $row['education'] ?? '';
+                            $row['skills'] = $row['skills'] ?? '';
+                            $row['ngo_name'] = $row['ngo_name'] ?? 'Sarathi';
+                            $row['role_position'] = $row['role_position'] ?? 'field worker';
+                            $row['status'] = $row['status'] ?? 'pending';
                         ?>
-                            <tr>
+                            <tr class="request-row" data-status="<?php echo $row['status']; ?>">
                                 <td>VR-<?php echo str_pad($row['id'], 6, '0', STR_PAD_LEFT); ?></td>
                                 <td>
                                     <strong><?php echo htmlspecialchars($row['full_name']); ?></strong><br>
+                                    <small style="color: var(--text-light);">Age: <?php echo $row['age']; ?>, <?php echo $row['gender']; ?></small><br>
+                                    <small>Education: <?php echo htmlspecialchars($row['education']); ?></small>
+                                </td>
+                                <td>
+                                    <?php echo htmlspecialchars($row['email']); ?><br>
+                                    <small style="color: var(--text-light);"><?php echo htmlspecialchars($row['mobile_number']); ?></small>
+                                </td>
+                                <td>
+                                    <?php echo htmlspecialchars($row['ngo_name']); ?><br>
                                     <small style="color: var(--text-light);"><?php echo htmlspecialchars($row['role_position']); ?></small>
                                 </td>
                                 <td>
-                                    <div style="display: flex; align-items: center;">
-                                        <span><?php echo htmlspecialchars($email); ?></span>
-                                        <?php if(!$is_valid_email): ?>
-                                            <span class="email-badge email-invalid" title="Invalid email address">
-                                                <i class="fas fa-exclamation-triangle"></i> Invalid
-                                            </span>
-                                        <?php else: ?>
-                                            <span class="email-badge email-valid" title="Valid email address">
-                                                <i class="fas fa-check"></i> Valid
-                                            </span>
-                                        <?php endif; ?>
-                                    </div>
-                                    <small style="color: var(--text-light);"><?php echo htmlspecialchars($row['mobile_number']); ?></small>
+                                    <span class="status-badge status-<?php echo $row['status']; ?>">
+                                        <?php echo ucfirst($row['status']); ?>
+                                    </span>
                                 </td>
-                                <td><?php echo htmlspecialchars($row['ngo_name']); ?></td>
-                                <td><?php echo date('d M Y', strtotime($row['created_at'])); ?></td>
                                 <td>
-                                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                    <?php echo date('d M Y', strtotime($row['created_at'])); ?><br>
+                                    <small style="color: var(--text-light);">
+                                        <?php echo date('h:i A', strtotime($row['created_at'])); ?>
+                                    </small>
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
                                         <button class="btn btn-info btn-sm" onclick="viewRequest(<?php echo $row['id']; ?>)">
                                             <i class="fas fa-eye"></i> View
                                         </button>
-                                        <button class="btn btn-success btn-sm" onclick="approveRequest(<?php echo $row['id']; ?>)" 
-                                                <?php if(!$is_valid_email) echo 'disabled title="Cannot approve: Invalid email address"'; ?>>
-                                            <i class="fas fa-check"></i> Approve
-                                        </button>
-                                        <button class="btn btn-danger btn-sm" onclick="rejectRequest(<?php echo $row['id']; ?>)">
-                                            <i class="fas fa-times"></i> Reject
+                                        
+                                        <?php if($row['status'] == 'pending'): ?>
+                                            <a href="admin_panel.php?action=approve&id=<?php echo $row['id']; ?>" class="btn btn-success btn-sm">
+                                                <i class="fas fa-check"></i> Approve
+                                            </a>
+                                            <a href="admin_panel.php?action=reject&id=<?php echo $row['id']; ?>" class="btn btn-danger btn-sm">
+                                                <i class="fas fa-times"></i> Reject
+                                            </a>
+                                        <?php endif; ?>
+                                        
+                                        <button class="btn btn-warning btn-sm" onclick="deleteRequest(<?php echo $row['id']; ?>)">
+                                            <i class="fas fa-trash"></i> Delete
                                         </button>
                                     </div>
                                 </td>
@@ -891,8 +675,8 @@ $pending_result = mysqli_query($conn, $pending_sql);
             <?php else: ?>
                 <div class="no-data">
                     <i class="fas fa-inbox" style="font-size: 3rem; opacity: 0.3; margin-bottom: 15px;"></i>
-                    <h3>No Pending Requests</h3>
-                    <p>All requests have been processed.</p>
+                    <h3>No Volunteer Requests Found</h3>
+                    <p>There are no volunteer requests in the system yet.</p>
                 </div>
             <?php endif; ?>
         </div>
@@ -914,7 +698,7 @@ $pending_result = mysqli_query($conn, $pending_sql);
     <script>
         // View Request Details
         function viewRequest(id) {
-            fetch(`admin_panel.php?action=view&id=${id}`)
+            fetch(`admin_requests.php?action=view&id=${id}`)
                 .then(response => {
                     const contentType = response.headers.get("content-type");
                     if (!contentType || !contentType.includes("application/json")) {
@@ -936,10 +720,6 @@ $pending_result = mysqli_query($conn, $pending_sql);
                             </div>
                         `;
                     } else {
-                        // Check email validity
-                        const email = data.email || '';
-                        const isValidEmail = email && email.includes('@') && email.includes('.');
-                        
                         modalBody.innerHTML = `
                             <div style="margin-bottom: 20px;">
                                 <h3>Personal Information</h3>
@@ -950,9 +730,7 @@ $pending_result = mysqli_query($conn, $pending_sql);
                                         <p><strong>Gender:</strong> ${data.gender || 'Not provided'}</p>
                                     </div>
                                     <div>
-                                        <p><strong>Email:</strong> ${email || 'Not provided'}
-                                            ${!isValidEmail ? '<span class="email-badge email-invalid" style="margin-left: 10px;">Invalid Email</span>' : ''}
-                                        </p>
+                                        <p><strong>Email:</strong> ${data.email || 'Not provided'}</p>
                                         <p><strong>Mobile:</strong> ${data.mobile_number || 'Not provided'}</p>
                                         <p><strong>Education:</strong> ${data.education || 'Not provided'}</p>
                                     </div>
@@ -1063,11 +841,16 @@ $pending_result = mysqli_query($conn, $pending_sql);
                             </div>
                             
                             <div style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
-                                <button class="btn btn-success" onclick="approveRequest(${data.id})" ${!isValidEmail ? 'disabled title="Cannot approve: Invalid email address"' : ''}>
-                                    <i class="fas fa-check"></i> Approve Application
-                                </button>
-                                <button class="btn btn-danger" onclick="rejectRequest(${data.id})">
-                                    <i class="fas fa-times"></i> Reject Application
+                                ${data.status === 'pending' ? `
+                                    <a href="admin_panel.php?action=approve&id=${data.id}" class="btn btn-success">
+                                        <i class="fas fa-check"></i> Approve Application
+                                    </a>
+                                    <a href="admin_panel.php?action=reject&id=${data.id}" class="btn btn-danger">
+                                        <i class="fas fa-times"></i> Reject Application
+                                    </a>
+                                ` : ''}
+                                <button class="btn btn-info" onclick="window.location.href='admin_volunteers.php'">
+                                    <i class="fas fa-users"></i> View All Volunteers
                                 </button>
                                 <button class="btn btn-warning" onclick="closeModal()">
                                     <i class="fas fa-times"></i> Close
@@ -1086,6 +869,7 @@ $pending_result = mysqli_query($conn, $pending_sql);
                             <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: var(--danger);"></i>
                             <h3>Error Loading Request Details</h3>
                             <p>Failed to load volunteer request details. Please try again.</p>
+                            <p style="color: var(--text-light); font-size: 0.9rem;">${error.message}</p>
                             <div style="margin-top: 20px;">
                                 <button class="btn btn-warning" onclick="closeModal()">
                                     <i class="fas fa-times"></i> Close
@@ -1101,18 +885,34 @@ $pending_result = mysqli_query($conn, $pending_sql);
             document.getElementById('detailsModal').style.display = 'none';
         }
         
-        // Approve Request
-        function approveRequest(id) {
-            if (confirm('Are you sure you want to approve this volunteer request?\n\nNote: The volunteer will be able to login with their email address.')) {
-                window.location.href = `admin_panel.php?action=approve&id=${id}`;
+        // Delete Request
+        function deleteRequest(id) {
+            if (confirm('⚠️ Are you sure you want to delete this volunteer request?\n\nThis action cannot be undone!')) {
+                window.location.href = `admin_requests.php?action=delete&id=${id}`;
             }
         }
         
-        // Reject Request
-        function rejectRequest(id) {
-            if (confirm('Are you sure you want to reject this volunteer request?')) {
-                window.location.href = `admin_panel.php?action=reject&id=${id}`;
-            }
+        // Filter requests by status
+        function filterRequests(status) {
+            const rows = document.querySelectorAll('.request-row');
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            
+            // Update active button
+            filterButtons.forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent.toLowerCase().includes(status)) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            // Filter rows
+            rows.forEach(row => {
+                if (status === 'all' || row.getAttribute('data-status') === status) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
         }
         
         // Close modal when clicking outside
@@ -1120,6 +920,11 @@ $pending_result = mysqli_query($conn, $pending_sql);
             if (e.target.classList.contains('modal')) {
                 closeModal();
             }
+        });
+        
+        // Initialize filter to show all
+        document.addEventListener('DOMContentLoaded', function() {
+            filterRequests('all');
         });
     </script>
 </body>

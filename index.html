@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        /* ALL YOUR CSS STYLES REMAIN THE SAME - I'LL INCLUDE THE FULL CSS */
         /* ===== CLEAN COLOR PALETTE ===== */
         :root {
             --primary: #2563eb;
@@ -935,9 +936,6 @@
         <div class="container header-container">
             <a href="#" class="logo">
                 <div class="logo-container">
-                    <!-- If you have a logo image, use this -->
-                    <!-- <img src="assets/Sarthilogo.png" alt="Sarathi Logo" class="logo-image"> -->
-                    <!-- Fallback icon if no image -->
                     <div class="logo-icon" style="width: 40px; height: 40px; background: var(--primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 20px;">
                         <i class="fas fa-hands-helping"></i>
                     </div>
@@ -1273,7 +1271,6 @@
                 <div class="footer-col">
                     <div class="footer-logo">
                         <div class="logo-container">
-                            <!-- Footer logo - same as header -->
                             <div style="width: 36px; height: 36px; background: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px;">
                                 <i class="fas fa-hands-helping"></i>
                             </div>
@@ -1304,7 +1301,7 @@
                 <div class="footer-col">
                     <h3>Login Portals</h3>
                     <ul class="footer-links">
-                        <li><a href="volunteerlogin.php"><i class="fas fa-user"></i> Volunteer Login</a></li>
+                        <li><a href="volunteer_login.php"><i class="fas fa-user"></i> Volunteer Login</a></li>
                         <li><a href="adminlogin.php"><i class="fas fa-user-shield"></i> Admin Login</a></li>
                         <li><a href="volunteer_request_fixed.php"><i class="fas fa-user-plus"></i> Create Volunteer Account</a></li>
                     </ul>
@@ -1339,7 +1336,7 @@
             </div>
 
             <div class="login-options">
-                <a href="volunteerlogin.php" class="option-card volunteer">
+                <a href="volunteer_login.php" class="option-card volunteer">
                     <i class="fas fa-user"></i>
                     <h3>Volunteer Login</h3>
                     <p>Access your volunteer dashboard to manage tasks, track attendance, and submit reports.</p>
@@ -1524,27 +1521,8 @@
             });
         });
 
-        // Check if user is logged in (for future use)
-        function checkLoginStatus() {
-            // This would check cookies or localStorage for login status
-            // For now, just a placeholder
-            const isLoggedIn = localStorage.getItem('sarathi_logged_in');
-            if (isLoggedIn) {
-                // Update UI for logged in user
-                const loginBtn = document.querySelector('.btn-primary[onclick*="openLoginModal"]');
-                if (loginBtn) {
-                    loginBtn.innerHTML = '<i class="fas fa-user"></i> Dashboard';
-                    loginBtn.onclick = function() {
-                        window.location.href = 'volunteer_dashboard.php';
-                    };
-                }
-            }
-        }
-
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
-            checkLoginStatus();
-            
             // Check for URL parameters for success messages
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.has('success')) {
