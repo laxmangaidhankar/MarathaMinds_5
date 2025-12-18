@@ -1,0 +1,373 @@
+<!doctype html>
+
+<html lang="en" class="layout-menu-fixed layout-compact" data-assets-path="../assets/"
+  data-template="vertical-menu-template-free">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+
+  <title>FieldMate</title>
+
+  <meta name="description" content="" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/x-icon" href="../assets/img/favicon/favicon.ico" />
+<style>/* Remove underline / focus outline from sidebar links */
+/* Remove underline / focus outline */
+
+</style>
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
+    rel="stylesheet" />
+
+  <link rel="stylesheet" href="../assets/vendor/fonts/iconify-icons.css" />
+
+  <link rel="stylesheet" href="../css/core.css" />
+  <link rel="stylesheet" href="../css/style.css" />
+  <!-- Vendors CSS -->
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+  <link rel="stylesheet" href="../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
+
+</head>
+
+<body>
+
+  <div class="layout-wrapper layout-content-navbar">
+    <div class="layout-container">
+      <!-- Menu -->
+
+      <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+        <div class="app-brand demo">
+          <a href="index.html" class="app-brand-link d-flex align-items-center">
+
+            <!-- Logo Image -->
+            <span class="app-brand-logo">
+              <img src="../assets/img/logo.png" alt="FieldMate" style="height: 36px; width: auto;" />
+            </span>
+
+            <!-- Brand Text -->
+            <span class="app-brand-text demo menu-text fw-bold ms-2">
+              FieldMate
+            </span>
+          </a>
+
+          <!-- Sidebar Toggle -->
+          <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
+            <i class="bx bx-chevron-left d-block d-xl-none align-middle"></i>
+          </a>
+        </div>
+
+
+        <div class="menu-divider mt-0"></div>
+
+        <div class="menu-inner-shadow"></div>
+
+        <ul class="menu-inner py-1">
+          <!-- Dashboards -->
+          <li class="menu-item active open">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+              <i class="menu-icon tf-icons bx bx-home-smile"></i>
+              <div class="text-truncate" data-i18n="Dashboards">Dashboards</div>
+            </a>
+            <ul class="menu-sub">
+              <li class="menu-item ">
+                <a href="index.html" class="menu-link">
+                  <div class="text-truncate" data-i18n="Analytics">Analytics</div>
+                </a>
+              </li>
+              <li class="menu-item">
+                <a href="#" class="menu-link" onclick="loadPage('live-map.html')">
+                  <div class="text-truncate" data-i18n="LiveMap">Live Map</div>
+                </a>
+              </li>
+              <li class="menu-item">
+                <a href="#" class="menu-link" onclick="loadPage('track-worker.html')">
+                  <div class="text-truncate" data-i18n="TrackWorker">Track Worker</div>
+                </a>
+              </li>
+              <li class="menu-item">
+                <a href="#" class="menu-link" onclick="loadPage('workforce.html')">
+                  <div class="text-truncate" data-i18n="Workforce">Workforce</div>
+                </a>
+              </li>
+              <li class="menu-item">
+                <a href="#" class="menu-link" onclick="loadPage('reports.html')">
+                  <div class="text-truncate" data-i18n="Reports">Reports</div>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li class="menu-header small text-uppercase">
+            <span class="menu-header-text">Artificial Intelligence</span>
+          </li>
+      
+
+
+          <li class="menu-item">
+            <a href="#" class="menu-link" onclick="loadPage('ai-task.html')">
+              <i class="menu-icon bx bx-task"></i>
+              <div class="text-truncate">AI Task</div>
+            </a>
+          </li>
+
+          <li class="menu-item">
+            <a href="#" class="menu-link" onclick="loadPage('ai-reporting-analysis.html')">
+              <i class="menu-icon bx bx-bar-chart-alt-2"></i>
+              <div class="text-truncate">AI Reports</div>
+            </a>
+          </li>
+
+
+
+
+
+
+          <li class="menu-header small text-uppercase">
+            <span class="menu-header-text">Settings</span>
+          </li>
+
+          <li class="menu-item">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+              <i class="menu-icon tf-icons bx bx-dock-top"></i>
+              <div class="text-truncate" data-i18n="Account Settings">Account Settings</div>
+            </a>
+
+            <!-- Submenu -->
+            <ul class="menu-sub">
+              <li class="menu-item">
+                <a href="settings-account.html" class="menu-link">
+                  <div class="text-truncate">Account</div>
+                </a>
+              </li>
+
+
+            </ul>
+          </li>
+
+          <li class="menu-item">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+              <i class="menu-icon tf-icons bx bx-lock-open-alt"></i>
+              <div class="text-truncate" data-i18n="Authentications">Authentications</div>
+            </a>
+            <ul class="menu-sub">
+              <li class="menu-item">
+                <a href="auth-login-basic.html" class="menu-link" target="_blank">
+                  <div class="text-truncate" data-i18n="Basic">Login</div>
+                </a>
+              </li>
+              <li class="menu-item">
+                <a href="auth-register-basic.html" class="menu-link" target="_blank">
+                  <div class="text-truncate" data-i18n="Basic">Register</div>
+                </a>
+              </li>
+              <li class="menu-item">
+                <a href="auth-forgot-password-basic.html" class="menu-link" target="_blank">
+                  <div class="text-truncate" data-i18n="Basic">Forgot Password</div>
+                </a>
+              </li>
+            </ul>
+          </li>
+
+
+        </ul>
+      </aside>
+      <!-- / Menu -->
+
+
+      <!-- Layout container -->
+      <div class="layout-page">
+
+        <!-- Navbar -->
+        <nav
+          class="layout-navbar container-xxl navbar-detached navbar navbar-expand-xl align-items-center bg-navbar-theme"
+          id="layout-navbar">
+          <div class="layout-menu-toggle navbar-nav align-items-xl-center me-4 me-xl-0 d-xl-none">
+            <a class="nav-item nav-link px-0 me-xl-6" href="javascript:void(0)"><i
+                class="icon-base bx bx-menu icon-md"></i></a>
+          </div>
+          <div class="navbar-nav-right d-flex align-items-center justify-content-end" id="navbar-collapse">
+            <div class="navbar-nav align-items-center me-auto">
+              <div class="nav-item d-flex align-items-center">
+                <span class="w-px-22 h-px-22"><i class="icon-base bx bx-search icon-md"></i></span>
+                <input type="text" class="form-control border-0 shadow-none ps-1 ps-sm-2 d-md-block d-none"
+                  placeholder="Search..." />
+              </div>
+            </div>
+          </div>
+        </nav>
+
+
+
+        <div class="content-wrapper">
+
+          <!-- Dynamic Page Content -->
+          <div id="mainContent" class="container-xxl flex-grow-1 container-p-y">
+            <div id="dashboardContent" class="row">
+
+            <div class="container-xxl flex-grow-1 container-p-y">
+              <div class="row">
+                <div class="col-md-12">
+
+                  <div class="card mb-6">
+                    <!-- Account -->
+                    <div class="card-body">
+                      <div class="d-flex align-items-start align-items-sm-center gap-6 pb-4 border-bottom">
+                        <img src="../assets/img/user.png" alt="user-avatar" class="d-block w-px-100 h-px-100 rounded"
+                          id="uploadedAvatar" />
+                        <div class="button-wrapper">
+                          <label for="upload" class="btn btn-primary me-3 mb-4" tabindex="0">
+                            <span class="d-none d-sm-block">Upload new photo</span>
+                            <i class="icon-base bx bx-upload d-block d-sm-none"></i>
+                            <input type="file" id="upload" class="account-file-input" hidden
+                              accept="image/png, image/jpeg" />
+                          </label>
+                          <button type="button" class="btn btn-outline-secondary account-image-reset mb-4">
+                            <i class="icon-base bx bx-reset d-block d-sm-none"></i>
+                            <span class="d-none d-sm-block">Reset</span>
+                          </button>
+
+                          <div>Allowed JPG, GIF or PNG. Max size of 800K</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="card-body pt-4">
+                      <form id="formAccountSettings" method="POST" onsubmit="return false">
+                        <div class="row g-6">
+                          <div class="col-md-6">
+                            <label for="firstName" class="form-label">First Name</label>
+                            <input class="form-control" type="text" id="firstName" name="firstName" autofocus />
+                          </div>
+                          <div class="col-md-6">
+                            <label for="lastName" class="form-label">Last Name</label>
+                            <input class="form-control" type="text" name="lastName" id="lastName" />
+                          </div>
+                          <div class="col-md-6">
+                            <label for="email" class="form-label">E-mail</label>
+                            <input class="form-control" type="text" id="email" name="email" />
+                          </div>
+                          <div class="col-md-6">
+                            <label for="organization" class="form-label">Organization</label>
+                            <input type="text" class="form-control" id="organization" name="organization" />
+                          </div>
+                          <div class="col-md-6">
+                            <label class="form-label" for="phoneNumber">Phone Number</label>
+                            <div class="input-group input-group-merge">
+                              <span class="input-group-text">IND (+91)</span>
+                              <input type="text" id="phoneNumber" name="phoneNumber" class="form-control" />
+                            </div>
+                          </div>
+                          <div class="col-md-6">
+                            <label for="address" class="form-label">Address</label>
+                            <input type="text" class="form-control" id="address" name="address" />
+                          </div>
+                          <div class="col-md-6">
+                            <label for="state" class="form-label">State</label>
+                            <input class="form-control" type="text" id="state" name="state" />
+                          </div>
+                          <div class="col-md-6">
+                            <label for="zipCode" class="form-label">Zip Code</label>
+                            <input type="text" class="form-control" id="zipCode" name="zipCode" maxlength="6" />
+                          </div>
+
+
+
+                          <div class="mt-6">
+                            <button type="submit" class="btn btn-primary me-3">Save changes</button>
+                            <button type="reset" class="btn btn-outline-secondary">Cancel</button>
+                          </div>
+                      </form>
+                    </div>
+                    <!-- /Account -->
+                  </div>
+                  <div class="card">
+                    <h5 class="card-header">Delete Account</h5>
+                    <div class="card-body">
+                      <div class="mb-6 col-12 mb-0">
+                        <div class="alert alert-warning">
+                          <h5 class="alert-heading mb-1">Are you sure you want to delete your account?</h5>
+                          <p class="mb-0">Once you delete your account, there is no going back. Please be certain.</p>
+                        </div>
+                      </div>
+                      <form id="formAccountDeactivation" onsubmit="return false">
+                        <div class="form-check my-8 ms-2">
+                          <input class="form-check-input" type="checkbox" name="accountActivation"
+                            id="accountActivation" />
+                          <label class="form-check-label" for="accountActivation">I confirm my account
+                            deactivation</label>
+                        </div>
+                        <button type="submit" class="btn btn-danger deactivate-account">Deactivate Account</button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- / Content -->
+
+            <!-- Footer -->
+            <footer class="content-footer footer bg-footer-theme">
+              <div class="container-xxl">
+                <div
+                  class="footer-container d-flex align-items-center justify-content-between py-4 flex-md-row flex-column">
+                  <div class="mb-2 mb-md-0">
+                    ©
+                    <script>
+                      document.write(new Date().getFullYear());
+                    </script>
+                    , made with ❤️ by
+                    <P>MarathaMinds</P>
+                  </div>
+
+                </div>
+              </div>
+            </footer>
+            <!-- / Footer -->
+
+            <div class="content-backdrop fade"></div>
+
+            <!-- Content wrapper -->
+          </div>
+          <!-- / Layout page -->
+        </div>
+
+        <!-- Overlay -->
+        <div class="layout-overlay layout-menu-toggle"></div>
+      </div>
+    </div>
+  </div>
+  <script>
+    function loadPage(page) {
+      const content = document.getElementById('mainContent');
+ if (page === 'live-map.html') {
+        setTimeout(() => {
+          initLiveMap();
+        }, 150);
+      }
+    
+      fetch(page)
+        .then(response => {
+          if (!response.ok) throw new Error('Network response was not ok');
+          return response.text();
+        })
+        .then(html => {
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, 'text/html');
+          content.innerHTML = doc.body.innerHTML;
+        })
+        .catch(error => {
+          content.innerHTML = `<div class="alert alert-danger">Failed to load page: ${error}</div>`;
+        });
+    }
+
+  </script>
+
+</body>
+
+</html>
