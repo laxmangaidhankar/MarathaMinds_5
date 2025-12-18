@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Worker Attendance</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Boxicons -->
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
+  <style>
+    body { background-color: #f8f9fa; }
+    .card-action { cursor: pointer; transition: transform 0.2s; }
+    .card-action:hover { transform: translateY(-5px); box-shadow: 0 4px 15px rgba(0,0,0,0.15); }
+    .action-icon { font-size: 2rem; padding: 15px; border-radius: 50%; color: #fff; display: inline-flex; align-items: center; justify-content: center; }
+    .bg-checkin { background-color: #28a745; }
+    .bg-checkout { background-color: #dc3545; }
+    .bg-priority { background-color: #17a2b8; }
+    .section-header { margin-bottom: 1rem; font-weight: bold; }
+    .status-indicator { font-weight: bold; }
+  </style>
+</head>
+<body>
+
+<div class="container-fluid mt-4">
+
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold">Task Management</h4>
+    <span class="text-muted">Welcome, <strong>Ravi Patil</strong></span>
+  </div>
+
+  <!-- Attendance Info Cards -->
+  
+
+  <!-- Task Prioritization Section -->
+  <div class="card mb-4">
+    <div class="card-header section-header">
+      Prioritize My Tasks
+    </div>
+    <div class="card-body">
+      <p>Workers can view tasks sorted by priority, deadlines, and importance:</p>
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>Task</th>
+            <th>Zone</th>
+            <th>Priority</th>
+            <th>Status</th>
+            <th>Deadline</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Garbage Collection</td>
+            <td>Zone A</td>
+            <td><span class="badge bg-priority">High</span></td>
+            <td><span class="badge bg-success">Completed</span></td>
+            <td>Today</td>
+          </tr>
+          <tr>
+            <td>Plastic Segregation</td>
+            <td>Zone B</td>
+            <td><span class="badge bg-priority">Medium</span></td>
+            <td><span class="badge bg-warning text-dark">Ongoing</span></td>
+            <td>Today</td>
+          </tr>
+          <tr>
+            <td>Recycling Check</td>
+            <td>Zone C</td>
+            <td><span class="badge bg-priority">Low</span></td>
+            <td><span class="badge bg-danger">Pending</span></td>
+            <td>Tomorrow</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Attendance Analytics -->
+  <div class="card mb-4">
+    <div class="card-header section-header">
+      Attendance Summary
+    </div>
+    <div class="card-body">
+      <div class="row text-center">
+        <div class="col-md-3 mb-3">
+          <div class="card stat-card p-2">
+            <h6>Total Days Present</h6>
+            <h3>18</h3>
+            <small class="text-muted">This Month</small>
+          </div>
+        </div>
+        <div class="col-md-3 mb-3">
+          <div class="card stat-card p-2">
+            <h6>Leaves Taken</h6>
+            <h3>2</h3>
+            <small class="text-muted">Approved</small>
+          </div>
+        </div>
+        <div class="col-md-3 mb-3">
+          <div class="card stat-card p-2">
+            <h6>Late Check-ins</h6>
+            <h3>1</h3>
+            <small class="text-muted">This Month</small>
+          </div>
+        </div>
+        <div class="col-md-3 mb-3">
+          <div class="card stat-card p-2">
+            <h6>Tasks Completed</h6>
+            <h3>12</h3>
+            <small class="text-muted">With full geo verification</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
