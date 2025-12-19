@@ -1,0 +1,146 @@
+
+/* ===============================
+   GLOBAL
+================================ */
+body {
+  background-color: #f5f6fa;
+  font-family: "Inter", "Segoe UI", sans-serif;
+  color: #2c2c2c;
+}
+
+/* ===============================
+   HEADER
+================================ */
+h4 {
+  color: #1f2937;
+}
+
+/* ===============================
+   STAT CARDS
+================================ */
+.stat-card {
+  padding: 18px;
+  border-radius: 14px;
+  border: none;
+  background: #ffffff;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.08);
+}
+
+.stat-card h6 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #6b7280;
+  margin-bottom: 6px;
+}
+
+.stat-card h3 {
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+/* Variants */
+.stat-card.success {
+  background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+}
+
+.stat-card.warning {
+  background: linear-gradient(135deg, #fffbeb, #fef3c7);
+}
+
+.stat-card.danger {
+  background: linear-gradient(135deg, #fef2f2, #fee2e2);
+}
+
+/* ===============================
+   CARD
+================================ */
+.card {
+  border: none;
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
+
+/* ===============================
+   TABLE
+================================ */
+.table thead th {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: #6b7280;
+}
+
+.table tbody tr {
+  transition: background 0.2s ease;
+}
+
+.table tbody tr:hover {
+  background: #f9fafb;
+}
+
+.table td {
+  vertical-align: middle;
+}
+
+.table small {
+  font-size: 12px;
+}
+
+/* ===============================
+   BADGES
+================================ */
+.badge {
+  padding: 6px 10px;
+  font-size: 11px;
+  border-radius: 10px;
+}
+
+/* ===============================
+   PROGRESS BAR
+================================ */
+.progress {
+  background-color: #e5e7eb;
+  border-radius: 8px;
+}
+
+.progress-bar {
+  border-radius: 8px;
+}
+
+/* ===============================
+   BUTTONS
+================================ */
+.btn-sm {
+  border-radius: 10px;
+  padding: 5px 12px;
+}
+
+/* ===============================
+   SEARCH INPUT
+================================ */
+.card-header input {
+  border-radius: 10px;
+  font-size: 13px;
+}
+
+/* ===============================
+   RESPONSIVE
+================================ */
+@media (max-width: 768px) {
+  .card-header input {
+    width: 100% !important;
+    margin-top: 10px;
+  }
+
+  .d-flex.justify-content-between {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+}

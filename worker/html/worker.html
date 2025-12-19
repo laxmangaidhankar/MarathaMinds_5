@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Worker Assistance Features</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Boxicons -->
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .feature-card {
+      transition: transform 0.2s;
+    }
+    .feature-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    }
+    .feature-icon {
+      font-size: 2rem;
+      padding: 15px;
+      border-radius: 50%;
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .bg-task { background-color: #17a2b8; }
+    .bg-attendance { background-color: #28a745; }
+    .bg-notification { background-color: #ffc107; color: #212529; }
+    .bg-evidence { background-color: #6f42c1; }
+    .bg-zone { background-color: #fd7e14; }
+    .bg-collab { background-color: #0dcaf0; }
+    .bg-safety { background-color: #dc3545; }
+    .bg-reward { background-color: #20c997; }
+    .bg-offline { background-color: #6610f2; }
+    .bg-training { background-color: #198754; }
+  </style>
+</head>
+<body>
+
+<div class="container-fluid mt-4">
+  <h3 class="mb-4 text-center">Smart Worker Assistance System</h3>
+
+  <div class="row g-3">
+
+    <!-- 1. Task Auto-Scheduling -->
+    <div class="col-md-6 col-lg-4">
+      <div class="card feature-card shadow-sm h-100">
+        <div class="card-body d-flex align-items-start gap-3">
+          <div class="feature-icon bg-task">
+            <i class="bx bx-calendar-alt"></i>
+          </div>
+          <div>
+            <h6>Task Auto-Scheduling</h6>
+            <p class="mb-0 small">Assigns tasks automatically based on availability, zone, and skill set. Prioritizes urgent tasks to reduce overlap.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Attendance & Check-In Automation -->
+    <div class="col-md-6 col-lg-4">
+      <div class="card feature-card shadow-sm h-100">
+        <div class="card-body d-flex align-items-start gap-3">
+          <div class="feature-icon bg-attendance">
+            <i class="bx bx-check-shield"></i>
+          </div>
+          <div>
+            <h6>Attendance & Check-In</h6>
+            <p class="mb-0 small">GPS-based automatic check-in/out synced with manager dashboard in real-time. Sends reminders if missed.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Instant Task Notifications -->
+    <div class="col-md-6 col-lg-4">
+      <div class="card feature-card shadow-sm h-100">
+        <div class="card-body d-flex align-items-start gap-3">
+          <div class="feature-icon bg-notification">
+            <i class="bx bx-bell"></i>
+          </div>
+          <div>
+            <h6>Instant Task Notifications</h6>
+            <p class="mb-0 small">Real-time updates for new or changed assignments, including high-priority tasks and emergencies.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Personal Work Analytics -->
+    <div class="col-md-6 col-lg-4">
+      <div class="card feature-card shadow-sm h-100">
+        <div class="card-body d-flex align-items-start gap-3">
+          <div class="feature-icon bg-task">
+            <i class="bx bx-chart"></i>
+          </div>
+          <div>
+            <h6>Personal Work Analytics</h6>
+            <p class="mb-0 small">Displays tasks completed, hours worked, and impact metrics with visual trends over time.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. Leave Request Simplification -->
+    <div class="col-md-6 col-lg-4">
+      <div class="card feature-card shadow-sm h-100">
+        <div class="card-body d-flex align-items-start gap-3">
+          <div class="feature-icon bg-attendance">
+            <i class="bx bx-file"></i>
+          </div>
+          <div>
+            <h6>Leave Request Simplification</h6>
+            <p class="mb-0 small">One-click leave application with reason selection. Auto-suggests alternatives to minimize disruption.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. Evidence & Proof Upload -->
+    <div class="col-md-6 col-lg-4">
+      <div class="card feature-card shadow-sm h-100">
+        <div class="card-body d-flex align-items-start gap-3">
+          <div class="feature-icon bg-evidence">
+            <i class="bx bx-camera"></i>
+          </div>
+          <div>
+            <h6>Evidence & Proof Upload</h6>
+            <p class="mb-0 small">Supports photo, video, or document upload for task completion with location tagging.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7. Zone & Route Assistance -->
+    <div class="col-md-6 col-lg-4">
+      <div class="card feature-card shadow-sm h-100">
+        <div class="card-body d-flex align-items-start gap-3">
+          <div class="feature-icon bg-zone">
+            <i class="bx bx-map"></i>
+          </div>
+          <div>
+            <h6>Zone & Route Assistance</h6>
+            <p class="mb-0 small">Highlights assigned zones and optimized routes to reduce travel time and prevent delays.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 8. Peer Collaboration -->
+    <div class="col-md-6 col-lg-4">
+      <div class="card feature-card shadow-sm h-100">
+        <div class="card-body d-flex align-items-start gap-3">
+          <div class="feature-icon bg-collab">
+            <i class="bx bx-group"></i>
+          </div>
+          <div>
+            <h6>Peer Collaboration</h6>
+            <p class="mb-0 small">Worker-to-worker messaging to coordinate tasks, share updates, and resolve issues faster.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 9. Emergency Alerts & Safety -->
+    <div class="col-md-6 col-lg-4">
+      <div class="card feature-card shadow-sm h-100">
+        <div class="card-body d-flex align-items-start gap-3">
+          <div class="feature-icon bg-safety">
+            <i class="bx bx-shield"></i>
+          </div>
+          <div>
+            <h6>Emergency Alerts & Safety</h6>
+            <p class="mb-0 small">Panic button alerts supervisor and team with real-time location for rapid response.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 10. Rewards & Recognition -->
+    <div class="col-md-6 col-lg-4">
+      <div class="card feature-card shadow-sm h-100">
+        <div class="card-body d-flex align-items-start gap-3">
+          <div class="feature-icon bg-reward">
+            <i class="bx bx-trophy"></i>
+          </div>
+          <div>
+            <h6>Rewards & Recognition</h6>
+            <p class="mb-0 small">Tracks milestones, gamifies achievements, and motivates workers with badges or incentives.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 11. Offline Support -->
+    <div class="col-md-6 col-lg-4">
+      <div class="card feature-card shadow-sm h-100">
+        <div class="card-body d-flex align-items-start gap-3">
+          <div class="feature-icon bg-offline">
+            <i class="bx bx-cloud-lightning"></i>
+          </div>
+          <div>
+            <h6>Offline Support</h6>
+            <p class="mb-0 small">Works in low-network zones and auto-syncs data once network is available.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 12. Training & Knowledge Hub -->
+    <div class="col-md-6 col-lg-4">
+      <div class="card feature-card shadow-sm h-100">
+        <div class="card-body d-flex align-items-start gap-3">
+          <div class="feature-icon bg-training">
+            <i class="bx bx-book"></i>
+          </div>
+          <div>
+            <h6>Training & Knowledge Hub</h6>
+            <p class="mb-0 small">Quick access to SOPs, safety guides, and tutorial videos for efficient task completion.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

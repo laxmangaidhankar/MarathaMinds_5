@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>NGO Worker Analytics</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Boxicons -->
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-light">
+<div class="row">
+  <div class="col-12">
+    <div class="card h-100">
+      <div class="card-header">
+<div class="container-fluid mt-3">
+
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold">My Reports</h4>
+    <span class="text-muted">Welcome, <strong>Ravi Patil</strong></span>
+  </div>
+
+<div class="container-fluid mt-3">
+
+  <!-- 🔹 Summary Cards -->
+  <div class="row g-3 mb-3">
+
+    <div class="col-md-3">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h6 class="text-muted mb-1">Working Days (This Month)</h6>
+          <h3 class="mb-0">22</h3>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card shadow-sm border-success">
+        <div class="card-body">
+          <h6 class="text-muted mb-1">Days Present</h6>
+          <h3 class="mb-0 text-success">18</h3>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card shadow-sm border-warning">
+        <div class="card-body">
+          <h6 class="text-muted mb-1">Leaves Taken</h6>
+          <h3 class="mb-0 text-warning">4</h3>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card shadow-sm border-info">
+        <div class="card-body">
+          <h6 class="text-muted mb-1">Total Work Hours</h6>
+          <h3 class="mb-0 text-info">142 hrs</h3>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 🔹 Charts Row -->
+  <div class="row g-3 mb-3">
+
+    <div class="col-lg-6">
+      <div class="card shadow-sm">
+        <div class="card-header">
+          <h5 class="mb-0">Attendance Overview (This Month)</h5>
+        </div>
+        <div class="card-body">
+          <canvas id="attendanceChart" height="200"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="card shadow-sm">
+        <div class="card-header">
+          <h5 class="mb-0">Work Contribution Distribution</h5>
+        </div>
+        <div class="card-body">
+          <canvas id="workChart" height="200"></canvas>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 🔹 Worker Leave & Impact Table -->
+  <div class="row g-3">
+    <div class="col-12">
+      <div class="card shadow-sm">
+        <div class="card-header">
+          <h5 class="mb-0">Worker Attendance & Impact Report</h5>
+        </div>
+        <div class="card-body table-responsive">
+          <table class="table table-striped table-hover">
+            <thead>
+              <tr>
+                <th>Worker ID</th>
+                <th>Name</th>
+                <th>Days Present</th>
+                <th>Leaves Taken</th>
+                <th>Leave Reason</th>
+                <th>Work Done</th>
+                <th>Impact Created</th>
+                <th>Last Active</th>
+              </tr>
+            </thead>
+            <tbody>
+
+              <tr>
+                <td>NGO-W01</td>
+                <td>Rahul Patil</td>
+                <td>19</td>
+                <td>3</td>
+                <td>Medical</td>
+                <td>120 kg waste collected</td>
+                <td>0.4T CO₂ reduced</td>
+                <td>Today</td>
+              </tr>
+
+              <tr>
+                <td>NGO-W02</td>
+                <td>Neha Kulkarni</td>
+                <td>17</td>
+                <td>5</td>
+                <td>Family Emergency</td>
+                <td>95 kg waste segregated</td>
+                <td>0.3T CO₂ reduced</td>
+                <td>Yesterday</td>
+              </tr>
+
+              <tr>
+                <td>NGO-W03</td>
+                <td>Amit Joshi</td>
+                <td>15</td>
+                <td>7</td>
+                <td>Personal</td>
+                <td>78 kg plastic recycled</td>
+                <td>0.25T CO₂ reduced</td>
+                <td>2 days ago</td>
+              </tr>
+
+              <tr>
+                <td>NGO-W04</td>
+                <td>Pooja Deshmukh</td>
+                <td>20</td>
+                <td>2</td>
+                <td>Training</td>
+                <td>140 kg waste collected</td>
+                <td>0.5T CO₂ reduced</td>
+                <td>Today</td>
+              </tr>
+
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- 🔹 Charts Script -->
+<script>
+  // Attendance Chart
+  new Chart(document.getElementById('attendanceChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Present Days', 'Leave Days'],
+      datasets: [{
+        data: [18, 4],
+        backgroundColor: ['#28a745', '#ffc107']
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } }
+    }
+  });
+
+  // Work Contribution Chart
+  new Chart(document.getElementById('workChart'), {
+    type: 'pie',
+    data: {
+      labels: ['Waste Collected', 'Waste Segregated', 'Recycled Plastic'],
+      datasets: [{
+        data: [55, 30, 15],
+        backgroundColor: ['#17a2b8', '#28a745', '#ffc107']
+      }]
+    },
+    options: { responsive: true }
+  });
+</script>
+
+</body>
+</html>

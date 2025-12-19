@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Worker Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Boxicons -->
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
+  <style>
+    body { background-color: #f8f9fa; }
+    .card-action { cursor: pointer; transition: transform 0.2s; }
+    .card-action:hover { transform: translateY(-5px); box-shadow: 0 4px 15px rgba(0,0,0,0.15); }
+    .action-icon { font-size: 2rem; padding: 15px; border-radius: 50%; color: #fff; display: inline-flex; align-items: center; justify-content: center; }
+    .bg-help { background-color: #17a2b8; }
+    .bg-leave { background-color: #ffc107; color: #212529; }
+    .bg-tasks { background-color: #28a745; }
+    .bg-emergency { background-color: #dc3545; }
+    .bg-notify { background-color: #6610f2; }
+    .section-header { margin-bottom: 1rem; font-weight: bold; }
+  </style>
+</head>
+<body>
+<div class="row">
+  <div class="col-12">
+    <div class="card h-100">
+      <div class="card-header">
+<div class="container-fluid mt-3">
+
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold">Request Leave</h4>
+    <span class="text-muted">Welcome, <strong>Ravi Patil</strong></span>
+  </div>
+
+<div class="container-fluid mt-4">
+
+  <!-- Header -->
+
+
+  <!-- Quick Actions -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-3">
+      <div class="card card-action text-center p-3">
+        <div class="action-icon bg-help mx-auto mb-2"><i class="bx bx-help-circle"></i></div>
+        <h6>Request Help</h6>
+        <small class="text-muted">Ask for assistance or guidance</small>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card card-action text-center p-3">
+        <div class="action-icon bg-leave mx-auto mb-2"><i class="bx bx-calendar-minus"></i></div>
+        <h6>Request Leave</h6>
+        <small class="text-muted">Submit leave request with reason</small>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card card-action text-center p-3">
+        <div class="action-icon bg-tasks mx-auto mb-2"><i class="bx bx-task"></i></div>
+        <h6>Assigned Tasks</h6>
+        <small class="text-muted">Check your current and pending tasks</small>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card card-action text-center p-3">
+        <div class="action-icon bg-emergency mx-auto mb-2"><i class="bx bx-bolt-circle"></i></div>
+        <h6>Emergency Alert</h6>
+        <small class="text-muted">Notify supervisor immediately</small>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leave / Help Request Forms -->
+  <div class="row g-3 mb-4">
+    <!-- Leave Request -->
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <h6 class="mb-0 section-header">Leave Request</h6>
+        </div>
+        <div class="card-body">
+          <form>
+            <div class="mb-3">
+              <label for="leaveType" class="form-label">Leave Type</label>
+              <select class="form-select" id="leaveType">
+                <option selected>Choose...</option>
+                <option>Medical Leave</option>
+                <option>Personal Leave</option>
+                <option>Emergency Leave</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="leaveReason" class="form-label">Reason</label>
+              <textarea class="form-control" id="leaveReason" rows="2" placeholder="Write reason..."></textarea>
+            </div>
+            <div class="mb-3">
+              <label for="leaveDate" class="form-label">Date</label>
+              <input type="date" class="form-control" id="leaveDate">
+            </div>
+            <button type="submit" class="btn btn-warning">Submit Request</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Help Request -->
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <h6 class="mb-0 section-header">Help Request</h6>
+        </div>
+        <div class="card-body">
+          <form>
+            <div class="mb-3">
+              <label for="helpTopic" class="form-label">Topic</label>
+              <input type="text" class="form-control" id="helpTopic" placeholder="Enter topic or issue">
+            </div>
+            <div class="mb-3">
+              <label for="helpDetails" class="form-label">Details</label>
+              <textarea class="form-control" id="helpDetails" rows="3" placeholder="Explain your issue..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-info text-white">Submit Help Request</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Assigned Tasks Table -->
+  <div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h6 class="mb-0 section-header">Assigned Tasks</h6>
+      <select class="form-select form-select-sm w-25">
+        <option selected>Today</option>
+        <option>This Week</option>
+        <option>This Month</option>
+      </select>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>Task</th>
+            <th>Zone</th>
+            <th>Status</th>
+            <th>Progress</th>
+            <th>Deadline</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Garbage Collection</td>
+            <td>Zone A</td>
+            <td><span class="badge bg-success">Completed</span></td>
+            <td>
+              <div class="progress" style="height:6px;">
+                <div class="progress-bar bg-success" style="width:100%"></div>
+              </div>
+            </td>
+            <td>Today</td>
+          </tr>
+          <tr>
+            <td>Plastic Segregation</td>
+            <td>Zone B</td>
+            <td><span class="badge bg-warning text-dark">Ongoing</span></td>
+            <td>
+              <div class="progress" style="height:6px;">
+                <div class="progress-bar bg-warning" style="width:50%"></div>
+              </div>
+            </td>
+            <td>Today</td>
+          </tr>
+          <tr>
+            <td>Recycling Check</td>
+            <td>Zone C</td>
+            <td><span class="badge bg-danger">Pending</span></td>
+            <td>
+              <div class="progress" style="height:6px;">
+                <div class="progress-bar bg-danger" style="width:0%"></div>
+              </div>
+            </td>
+            <td>Tomorrow</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Emergency Alerts Section -->
+  <div class="card">
+    <div class="card-header section-header">
+      Emergency Alerts
+    </div>
+    <div class="card-body">
+      <p class="text-danger"><i class="bx bx-bolt-circle"></i> Send immediate alert to supervisor or manager for any unsafe situation.</p>
+      <button class="btn btn-danger"><i class="bx bx-bolt-circle"></i> Raise Emergency</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
