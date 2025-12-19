@@ -17,19 +17,23 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
 <body>
+  
 <div class="row">
   <div class="col-12">
     <div class="card h-100">
       <div class="card-header">
 <div class="container-fluid mt-3">
-
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold">Manage Map</h4>
+   
+  </div>
   <!-- 🔹 TOP SUMMARY CARDS -->
   <div class="row g-3 mb-3">
     <div class="col-md-3">
       <div class="card shadow-sm">
         <div class="card-body">
           <h6 class="text-muted mb-1">Total Workers</h6>
-          <h3 class="mb-0">48</h3>
+<h3 class="mb-0"><span id="totalWorkers">50</span></h3>
         </div>
       </div>
     </div>
@@ -38,7 +42,7 @@
       <div class="card shadow-sm border-success">
         <div class="card-body">
           <h6 class="text-muted mb-1">Inside Approved Area</h6>
-          <h3 class="mb-0 text-success">35</h3>
+<h3 class="mb-0 text-success"><span id="insideApproved">47</span></h3>
         </div>
       </div>
     </div>
@@ -47,7 +51,7 @@
       <div class="card shadow-sm border-danger">
         <div class="card-body">
           <h6 class="text-muted mb-1">Outside Area</h6>
-          <h3 class="mb-0 text-danger">8</h3>
+<h3 class="mb-0 text-danger"><span id="outsideArea">3</span></h3>
         </div>
       </div>
     </div>
@@ -56,7 +60,7 @@
       <div class="card shadow-sm border-warning">
         <div class="card-body">
           <h6 class="text-muted mb-1">Inactive / No GPS</h6>
-          <h3 class="mb-0 text-warning">5</h3>
+<h3 class="mb-0 text-warning"><span id="inactiveWorkers">3</span></h3>
         </div>
       </div>
     </div>
@@ -165,6 +169,29 @@
     });
   });
 </script>
+<script>
+async function loadReportsData() {
+  try {
+    const response = await fetch('http://localhost:3000/api/reports');
+    if (!response.ok) throw new Error('Server error');
+
+    const data = await response.json();
+
+    // ✅ Update top summary cards (MATCH SERVER KEYS)
+    document.getElementById('totalWorkers').textContent = data.totalWorkers;
+    document.getElementById('insideApproved').textContent = data.insideApproved;
+    document.getElementById('outsideArea').textContent = data.outsideArea;
+    document.getElementById('inactiveWorkers').textContent = data.inactiveWorkers;
+
+  } catch (err) {
+    console.error('Failed to load reports data', err);
+  }
+}
+
+// Load data when page loads
+document.addEventListener('DOMContentLoaded', loadReportsData);
+</script>
+
 
 
 </body>

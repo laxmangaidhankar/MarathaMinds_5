@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily Planner - Workforce</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Boxicons -->
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
+  <link rel="stylesheet" href="workforce.css">
+  <style>
+    .calendar-day {
+      border: 1px solid #ddd;
+      padding: 10px;
+      border-radius: 5px;
+      min-height: 80px;
+      cursor: pointer;
+      position: relative;
+    }
+    .calendar-day:hover {
+      background-color: #f1f1f1;
+    }
+    .event-badge {
+      display: inline-block;
+      padding: 2px 6px;
+      font-size: 12px;
+      border-radius: 4px;
+      margin-top: 4px;
+    }
+    .event-important { background-color: #dc3545; color: #fff; }
+    .event-normal { background-color: #0d6efd; color: #fff; }
+  </style>
+</head>
+<body>
+  <div class="row">
+  <div class="col-12">
+    <div class="card h-100">
+      <div class="card-header">
+
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold">Calendar</h4>
+   <button class="btn btn-primary btn-sm">
+      <i class="bx bx-calendar-plus"></i> Add Event
+    </button>
+  </div>
+<div class="container my-4">
+  <!-- Header -->
+  
+
+  <!-- Month and navigation -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <button class="btn btn-outline-secondary btn-sm" id="prevMonth">&lt; Prev</button>
+    <h5 id="monthYear">December 2025</h5>
+    <button class="btn btn-outline-secondary btn-sm" id="nextMonth">Next &gt;</button>
+  </div>
+
+  <!-- Calendar Grid -->
+  <div class="row row-cols-7 g-2" id="calendar">
+    <!-- Days will be injected here by JS -->
+  </div>
+
+  <!-- Today's Important Tasks -->
+  <div class="card mt-4">
+    <div class="card-header">
+      <h6>Important Tasks Today (AI Suggestions)</h6>
+    </div>
+    <div class="card-body" id="importantTasks">
+      <!-- Tasks will be injected here -->
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+const calendarEl = document.getElementById('calendar');
+const monthYearEl = document.getElementById('monthYear');
+const importantTasksEl = document.getElementById('importantTasks');
+
+let currentDate = new Date();
+let currentMonth = currentDate.getMonth();
+let currentYear = currentDate.getFullYear();
+
+const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+// Example AI-generated tasks (simulated)
+const aiTasks = {
+  "2025-12-19": [
+    {text: "Submit monthly report", type: "important"},
+    {text: "Team meeting at 11 AM", type: "normal"},
+  ],
+  "2025-12-20": [
+    {text: "Client call", type: "important"},
+  ]
+};
+
+// Render calendar
+function renderCalendar(month, year) {
+  calendarEl.innerHTML = '';
+  monthYearEl.textContent = `${months[month]} ${year}`;
+
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+  // Empty slots before first day
+  for (let i = 0; i < firstDay; i++) {
+    const emptyDiv = document.createElement('div');
+    emptyDiv.classList.add('col');
+    calendarEl.appendChild(emptyDiv);
+  }
+
+  // Days
+  for (let day = 1; day <= daysInMonth; day++) {
+    const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+    const dayDiv = document.createElement('div');
+    dayDiv.classList.add('col', 'calendar-day');
+    dayDiv.innerHTML = `<strong>${day}</strong>`;
+
+    if(aiTasks[dateStr]) {
+      aiTasks[dateStr].forEach(task => {
+        const span = document.createElement('span');
+        span.classList.add('event-badge', task.type==="important"?"event-important":"event-normal");
+        span.textContent = task.text;
+        dayDiv.appendChild(document.createElement('br'));
+        dayDiv.appendChild(span);
+      });
+    }
+
+    dayDiv.addEventListener('click', () => showTasks(dateStr));
+    calendarEl.appendChild(dayDiv);
+  }
+}
+
+// Show important tasks of a day
+function showTasks(dateStr) {
+  importantTasksEl.innerHTML = '';
+  if(aiTasks[dateStr]) {
+    aiTasks[dateStr].forEach(task => {
+      const div = document.createElement('div');
+      div.innerHTML = `<span class="${task.type==="important"?"text-danger":"text-primary"}">• ${task.text}</span>`;
+      importantTasksEl.appendChild(div);
+    });
+  } else {
+    importantTasksEl.textContent = "No tasks for this day.";
+  }
+}
+
+// Navigation
+document.getElementById('prevMonth').addEventListener('click', () => {
+  currentMonth--;
+  if(currentMonth < 0) { currentMonth = 11; currentYear--; }
+  renderCalendar(currentMonth, currentYear);
+});
+document.getElementById('nextMonth').addEventListener('click', () => {
+  currentMonth++;
+  if(currentMonth > 11) { currentMonth = 0; currentYear++; }
+  renderCalendar(currentMonth, currentYear);
+});
+
+// Initial render
+renderCalendar(currentMonth, currentYear);
+showTasks(`${currentYear}-${String(currentMonth+1).padStart(2,'0')}-${String(currentDate.getDate()).padStart(2,'0')}`);
+</script>
+</body>
+</html>

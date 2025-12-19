@@ -29,40 +29,99 @@
   </div>
 
   <!-- Analytics Cards -->
-  <div class="row mb-4">
-    <div class="col-md-3 col-6">
-      <div class="card stat-card">
+<div class="row g-3 mb-3">
+    <div class="col-md-3">
+      <div class="card shadow-sm">
+        <div class="card-body">
         <h6>Total Workforce</h6>
-        <h3>120</h3>
-        <small class="text-muted">Registered staff</small>
+      <h3 id="totalWorkforce">120</h3>
+      <small class="text-muted">Registered staff</small>
+        </div>
+      </div>
+    </div>
+    
+  <!-- Total Zones -->
+  <div class="col-md-3">
+      <div class="card shadow-sm border-success">
+        <div class="card-body">
+      <h6>Total Zones</h6>
+      <h3 id="totalZones">5</h3>
+      <small class="text-info">Operational areas</small>
+
+        </div>
+      </div>
+    </div>
+  <!-- Complaints Raised -->
+  
+
+  <!-- New Workers Joined -->
+    <div class="col-md-3">
+      <div class="card shadow-sm border-danger">
+        <div class="card-body">
+           <h6>Complaints Raised</h6>
+      <h3 id="totalComplaints">8</h3>
+      <small class="text-warning">Pending / Resolved</small>
+        </div>
       </div>
     </div>
 
-    <div class="col-md-3 col-6">
-      <div class="card stat-card success">
-        <h6>Active Today</h6>
-        <h3>92</h3>
-        <small class="text-success">+8 since yesterday</small>
+
+  <!-- Workers Wanting to Leave -->
+     <div class="col-md-3">
+      <div class="card shadow-sm border-danger">
+        <div class="card-body">
+               <h6>New Workers</h6>
+      <h3 id="newWorkers">3</h3>
+      <small class="text-success">Joined this month</small>
+
+        </div>
       </div>
     </div>
 
-    <div class="col-md-3 col-6">
-      <div class="card stat-card warning">
-        <h6>On Leave</h6>
-        <h3>18</h3>
-        <small class="text-warning">Approved leave</small>
+  <!-- Tasks Completed Today -->
+    <div class="col-md-3">
+      <div class="card shadow-sm border-danger">
+        <div class="card-body">
+                  <h6>Leaving Workers</h6>
+      <h3 id="leavingWorkers">2</h3>
+      <small class="text-danger">Requested resignation</small>
+
+
+        </div>
       </div>
     </div>
+ <div class="col-md-3">
+      <div class="card shadow-sm border-danger">
+        <div class="card-body">
+               <h6>Manpower Shortage</h6>
+      <h3 id="shortage">5</h3>
+      <small class="text-danger">Vacant / Unavailable</small>
 
-    <div class="col-md-3 col-6">
-      <div class="card stat-card danger">
-        <h6>Absent</h6>
-        <h3>10</h3>
-        <small class="text-danger">No check-in</small>
+        </div>
       </div>
     </div>
-  </div>
+ <div class="col-md-3">
+      <div class="card shadow-sm border-danger">
+        <div class="card-body">
+                 <h6>Pending Approvals</h6>
+      <h3 id="pendingApprovals">4</h3>
+      <small class="text-info">Requests / Tasks</small>
 
+
+        </div>
+      </div>
+    </div>
+     <div class="col-md-3">
+      <div class="card shadow-sm border-danger">
+        <div class="card-body">
+                   <h6>Overtime Workers</h6>
+      <h3 id="overtimeWorkers">6</h3>
+      <small class="text-primary">Extra hours today</small>
+
+
+        </div>
+      </div>
+    </div>
   <!-- Workforce Table -->
   <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">

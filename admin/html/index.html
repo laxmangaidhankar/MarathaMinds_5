@@ -9,10 +9,6 @@
     content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
   <title>FieldMate</title>
-
-
-  <link rel="icon" type="image/x-icon" href="../assets/img/favicon/favicon.ico" />
-  <link rel="stylesheet" href="../assets/vendor/fonts/iconify-icons.css" />
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 
 
@@ -25,7 +21,7 @@
 </head>
 
 <body>
- 
+
   <!-- Layout wrapper -->
   <div class="layout-wrapper layout-content-navbar">
     <div class="layout-container">
@@ -86,8 +82,8 @@
                 </a>
               </li>
               <li class="menu-item">
-                <a href="#" class="menu-link" onclick="loadPage('reports.html')">
-                  <div class="text-truncate" data-i18n="Reports">Reports</div>
+                <a href="#" class="menu-link" onclick="loadPage('task-planning.html')">
+                  <div class="text-truncate" data-i18n="Reports">Task Planning</div>
                 </a>
               </li>
             </ul>
@@ -95,13 +91,13 @@
           <li class="menu-header small text-uppercase">
             <span class="menu-header-text">Artificial Intelligence</span>
           </li>
-      
+
 
 
           <li class="menu-item">
-            <a href="#" class="menu-link" onclick="loadPage('ai-task.html')">
+            <a href="#" class="menu-link" onclick="loadPage('aicalendar.html')">
               <i class="menu-icon bx bx-task"></i>
-              <div class="text-truncate">AI Task</div>
+              <div class="text-truncate">AI Calendar</div>
             </a>
           </li>
 
@@ -267,7 +263,7 @@
                             </div>
 
                             <p class="mb-1">Workers Active Today</p>
-                            <h4 class="card-title mb-3">96 Workers</h4>
+                            <h4 id="workersActiveToday" class="card-title mb-3">Loading...</h4>
 
                             <small class="text-success fw-medium">
                               <i class="icon-base bx bx-up-arrow-alt"></i>
@@ -299,7 +295,7 @@
                             </div>
 
                             <p class="mb-1">Total Work Done Today</p>
-                            <h4 class="card-title mb-3">147 Tasks</h4>
+                            <h4 id="totalWorkDoneToday" class="card-title mb-3">Loading...</h4>
 
                             <small class="text-success fw-medium">
                               <i class="icon-base bx bx-up-arrow-alt"></i>
@@ -363,7 +359,7 @@
                             </div>
 
                             <p class="mb-1">Workers on Leave Today</p>
-                            <h4 class="card-title mb-3">14 Workers</h4>
+                            <h4 id="workersOnLeave" class="card-title mb-3">Loading...</h4>
 
                             <small class="text-warning fw-medium">
                               <i class="icon-base bx bx-info-circle"></i>
@@ -395,7 +391,7 @@
                             </div>
 
                             <p class="mb-1">Operational Impact</p>
-                            <h4 class="card-title mb-3">3 Zones Affected</h4>
+                            <h4 id="operationalImpactZones" class="card-title mb-3">Loading...</h4>
 
                             <small class="text-danger fw-medium">
                               <i class="icon-base bx bx-down-arrow-alt"></i>
@@ -422,7 +418,7 @@
                                   <span class="text-danger text-nowrap fw-medium">
                                     <i class="icon-base bx bx-up-arrow-alt"></i> 18.5%
                                   </span>
-                                  <h4 class="mb-0">26 Complaints</h4>
+                                  <h4 id="complaintsToday" class="card-title mb-3">Loading...</h4>
                                   <small class="text-muted">Across all service zones</small>
                                 </div>
                               </div>
@@ -448,11 +444,11 @@
                           <p class="card-subtitle">Real-time Staff & Project Insights</p>
                         </div>
                         <div class="dropdown">
-                          <button class="btn text-body-secondary p-0" type="button" id="operationsOverview"
+                          <button class="btn text-body-secondary p-0" type="button" id="operationsOverviewDropdown"
                             data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="icon-base bx bx-dots-vertical-rounded icon-lg"></i>
                           </button>
-                          <div class="dropdown-menu dropdown-menu-end" aria-labelledby="operationsOverview">
+                          <div class="dropdown-menu dropdown-menu-end" aria-labelledby="operationsOverviewDropdown">
                             <a class="dropdown-item" href="javascript:void(0);">Today</a>
                             <a class="dropdown-item" href="javascript:void(0);">This Week</a>
                             <a class="dropdown-item" href="javascript:void(0);">Export Report</a>
@@ -464,7 +460,7 @@
                         <!-- Main KPI -->
                         <div class="d-flex justify-content-between align-items-center mb-6">
                           <div class="d-flex flex-column align-items-center gap-1">
-                            <h3 class="mb-1">126</h3>
+                            <h3 class="mb-1" id="activeFieldStaff">Loading..</h3>
                             <small>Active Field Staff</small>
                           </div>
                           <div id="operationsOverviewChart"></div>
@@ -472,7 +468,6 @@
 
                         <!-- Breakdown -->
                         <ul class="p-0 m-0">
-
                           <!-- Attendance -->
                           <li class="d-flex align-items-center mb-5">
                             <div class="avatar flex-shrink-0 me-3">
@@ -486,7 +481,7 @@
                                 <small>GPS-based Check-ins</small>
                               </div>
                               <div class="user-progress">
-                                <h6 class="mb-0">92%</h6>
+                                <h6 class="mb-0" id="attendanceTracked">Loading..</h6>
                               </div>
                             </div>
                           </li>
@@ -504,7 +499,7 @@
                                 <small>Planned vs Completed</small>
                               </div>
                               <div class="user-progress">
-                                <h6 class="mb-0">314</h6>
+                                <h6 class="mb-0" id="tasksAssigned">Loading..</h6>
                               </div>
                             </div>
                           </li>
@@ -522,7 +517,7 @@
                                 <small>Pending Approvals</small>
                               </div>
                               <div class="user-progress">
-                                <h6 class="mb-0">18</h6>
+                                <h6 class="mb-0" id="leaveRequests">Loading..</h6>
                               </div>
                             </div>
                           </li>
@@ -540,15 +535,15 @@
                                 <small>Work Logs & Activity Updates</small>
                               </div>
                               <div class="user-progress">
-                                <h6 class="mb-0">109</h6>
+                                <h6 class="mb-0" id="dailyReports">Loading..</h6>
                               </div>
                             </div>
                           </li>
-
                         </ul>
                       </div>
                     </div>
                   </div>
+
 
                   <!--/ Order Statistics -->
 
@@ -686,7 +681,6 @@
                   </div>
                   <!--/ Staff Performance Overview -->
 
-                  <!-- Transactions -->
                   <div class="col-md-6 col-lg-4 order-2 mb-6">
                     <div class="card h-100">
                       <div class="card-header d-flex align-items-center justify-content-between">
@@ -705,302 +699,320 @@
                       </div>
 
                       <div class="card-body pt-4">
-                        <ul class="p-0 m-0">
-
-                          <!-- Activity 1 -->
-                          <li class="d-flex align-items-center mb-6">
-                            <div class="avatar flex-shrink-0 me-3 bg-label-success rounded">
-                              <i class="bx bx-check-circle icon-lg"></i>
-                            </div>
-                            <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                              <div class="me-2">
-                                <small class="d-block text-muted">Pickup Completed</small>
-                                <h6 class="fw-normal mb-0">Zone A – 12 Requests</h6>
-                              </div>
-                              <span class="badge bg-label-success">Completed</span>
-                            </div>
-                          </li>
-
-                          <!-- Activity 2 -->
-                          <li class="d-flex align-items-center mb-6">
-                            <div class="avatar flex-shrink-0 me-3 bg-label-warning rounded">
-                              <i class="bx bx-time icon-lg"></i>
-                            </div>
-                            <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                              <div class="me-2">
-                                <small class="d-block text-muted">Pickup In Progress</small>
-                                <h6 class="fw-normal mb-0">Zone C – 5 Requests</h6>
-                              </div>
-                              <span class="badge bg-label-warning">Ongoing</span>
-                            </div>
-                          </li>
-
-                          <!-- Activity 3 -->
-                          <li class="d-flex align-items-center mb-6">
-                            <div class="avatar flex-shrink-0 me-3 bg-label-primary rounded">
-                              <i class="bx bx-user-plus icon-lg"></i>
-                            </div>
-                            <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                              <div class="me-2">
-                                <small class="d-block text-muted">New User Registered</small>
-                                <h6 class="fw-normal mb-0">Kothrud Area</h6>
-                              </div>
-                              <span class="text-muted small">2 min ago</span>
-                            </div>
-                          </li>
-
-                          <!-- Activity 4 -->
-                          <li class="d-flex align-items-center mb-6">
-                            <div class="avatar flex-shrink-0 me-3 bg-label-info rounded">
-                              <i class="bx bx-map icon-lg"></i>
-                            </div>
-                            <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                              <div class="me-2">
-                                <small class="d-block text-muted">Zone Added</small>
-                                <h6 class="fw-normal mb-0">New Zone: Baner</h6>
-                              </div>
-                              <span class="text-muted small">Today</span>
-                            </div>
-                          </li>
-
-                          <!-- Activity 5 -->
-                          <li class="d-flex align-items-center">
-                            <div class="avatar flex-shrink-0 me-3 bg-label-danger rounded">
-                              <i class="bx bx-error-circle icon-lg"></i>
-                            </div>
-                            <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                              <div class="me-2">
-                                <small class="d-block text-muted">Pickup Failed</small>
-                                <h6 class="fw-normal mb-0">Zone D – Vehicle Issue</h6>
-                              </div>
-                              <span class="badge bg-label-danger">Alert</span>
-                            </div>
-                          </li>
-
+                        <ul class="p-0 m-0" id="recentActivities">
+                          <!-- Recent activities will be injected here by JS -->
                         </ul>
                       </div>
                     </div>
                   </div>
+
                 </div>
-              </div>
 
-            </div>
-          </div>
-
-
-
-
-          <!-- Footer -->
-          <footer class="content-footer footer bg-footer-theme">
-            <div class="container-xxl">
-              <div
-                class="footer-container d-flex align-items-center justify-content-between py-4 flex-md-row flex-column">
-                <div class="mb-2 mb-md-0">
-                  ©
-                  <script>
-                    document.write(new Date().getFullYear());
-                  </script>
-                  , Made with ❤️ by
-                  <p>MarathaMinds</p>
-                </div>
               </div>
             </div>
-          </footer>
-          <!-- / Footer -->
 
 
-      <script>
-            let liveMapInstance = null;
 
-            function initLiveMap() {
-              // Prevent duplicate initialization
-              if (liveMapInstance) {
+
+            <!-- Footer -->
+            <footer class="content-footer footer bg-footer-theme">
+              <div class="container-xxl">
+                <div
+                  class="footer-container d-flex align-items-center justify-content-between py-4 flex-md-row flex-column">
+                  <div class="mb-2 mb-md-0">
+                    ©
+                    <script>
+                      document.write(new Date().getFullYear());
+                    </script>
+                    , Made with ❤️ by
+                    <p>MarathaMinds</p>
+                  </div>
+                </div>
+              </div>
+            </footer>
+            <!-- / Footer -->
+
+
+            <script>
+              let liveMapInstance = null;
+
+              function initLiveMap() {
+                // Prevent duplicate initialization
+                if (liveMapInstance) {
+                  setTimeout(() => liveMapInstance.invalidateSize(), 200);
+                  return;
+                }
+
+                liveMapInstance = L.map('liveMapInner').setView([18.5204, 73.8567], 12);
+
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                  attribution: '&copy; OpenStreetMap contributors'
+                }).addTo(liveMapInstance);
+
+                const zones = [
+                  { name: "Zone A", center: [18.525, 73.85], color: "#2563eb" },
+                  { name: "Zone B", center: [18.51, 73.86], color: "#16a34a" },
+                  { name: "Zone C", center: [18.54, 73.88], color: "#dc2626" }
+                ];
+
+                zones.forEach(z => {
+                  L.circle(z.center, {
+                    radius: 1200,
+                    color: z.color,
+                    fillColor: z.color,
+                    fillOpacity: 0.25
+                  }).addTo(liveMapInstance);
+
+                  L.marker(z.center).addTo(liveMapInstance).bindPopup(z.name);
+                });
+
+                // 🔑 CRITICAL FIX
                 setTimeout(() => liveMapInstance.invalidateSize(), 200);
-                return;
+              }
+            </script>
+            <script>
+              function loadPage(page) {
+                const content = document.getElementById('mainContent');
+                if (page === 'live-map.html') {
+                  setTimeout(() => {
+                    initLiveMap();
+                  }, 150);
+                }
+
+                fetch(page)
+                  .then(response => {
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    return response.text();
+                  })
+                  .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    content.innerHTML = doc.body.innerHTML;
+                  })
+                  .catch(error => {
+                    content.innerHTML = `<div class="alert alert-danger">Failed to load page: ${error}</div>`;
+                  });
               }
 
-              liveMapInstance = L.map('liveMapInner').setView([18.5204, 73.8567], 12);
+            </script>
+            <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+
+
+
+            <script>
+              const map = L.map('liveMap').setView([18.5204, 73.8567], 12); // Pune coordinates
 
               L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; OpenStreetMap contributors'
-              }).addTo(liveMapInstance);
+              }).addTo(map);
 
+              // Example zones
               const zones = [
-                { name: "Zone A", center: [18.525, 73.85], color: "#2563eb" },
-                { name: "Zone B", center: [18.51, 73.86], color: "#16a34a" },
-                { name: "Zone C", center: [18.54, 73.88], color: "#dc2626" }
+                { name: "Zone A", coords: [18.525, 73.85] },
+                { name: "Zone B", coords: [18.51, 73.86] },
               ];
 
-              zones.forEach(z => {
-                L.circle(z.center, {
-                  radius: 1200,
-                  color: z.color,
-                  fillColor: z.color,
-                  fillOpacity: 0.25
-                }).addTo(liveMapInstance);
-
-                L.marker(z.center).addTo(liveMapInstance).bindPopup(z.name);
+              zones.forEach(zone => {
+                L.marker(zone.coords).addTo(map)
+                  .bindPopup(zone.name)
+                  .openPopup();
               });
+            </script>
 
-              // 🔑 CRITICAL FIX
-              setTimeout(() => liveMapInstance.invalidateSize(), 200);
-            }
-          </script>    
- <script>
-    function loadPage(page) {
-      const content = document.getElementById('mainContent');
- if (page === 'live-map.html') {
-        setTimeout(() => {
-          initLiveMap();
-        }, 150);
-      }
-    
-      fetch(page)
-        .then(response => {
-          if (!response.ok) throw new Error('Network response was not ok');
-          return response.text();
-        })
-        .then(html => {
-          const parser = new DOMParser();
-          const doc = parser.parseFromString(html, 'text/html');
-          content.innerHTML = doc.body.innerHTML;
-        })
-        .catch(error => {
-          content.innerHTML = `<div class="alert alert-danger">Failed to load page: ${error}</div>`;
-        });
-    }
-
-  </script>
-          <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-          
-
-
-          <script>
-            const map = L.map('liveMap').setView([18.5204, 73.8567], 12); // Pune coordinates
-
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-              attribution: '&copy; OpenStreetMap contributors'
-            }).addTo(map);
-
-            // Example zones
-            const zones = [
-              { name: "Zone A", coords: [18.525, 73.85] },
-              { name: "Zone B", coords: [18.51, 73.86] },
-            ];
-
-            zones.forEach(zone => {
-              L.marker(zone.coords).addTo(map)
-                .bindPopup(zone.name)
-                .openPopup();
-            });
-          </script>
-
-          <script>
-            document.querySelectorAll('.menu-toggle').forEach(toggle => {
-              toggle.addEventListener('click', function () {
-                const parent = this.parentElement;
-                parent.classList.toggle('open');
+            <script>
+              document.querySelectorAll('.menu-toggle').forEach(toggle => {
+                toggle.addEventListener('click', function () {
+                  const parent = this.parentElement;
+                  parent.classList.toggle('open');
+                });
               });
-            });
-          </script>
-          <script>
-            function navigate(page) {
-              const content = document.getElementById('page-content');
+            </script>
+            <script>
+              function navigate(page) {
+                const content = document.getElementById('page-content');
 
-              // Loader
-              content.innerHTML = `
+                // Loader
+                content.innerHTML = `
       <div class="d-flex justify-content-center align-items-center" style="height:60vh">
         <div class="spinner-border text-primary"></div>
       </div>
     `;
 
-              fetch(page)
-                .then(res => {
-                  if (!res.ok) throw new Error("Page not found");
-                  return res.text();
-                })
-                .then(html => {
-                  content.innerHTML = html;
-                  history.pushState({ page }, "", "#" + page);
-                  setActiveMenu(page);
-                   if (page.includes('live-map')) {
-    setTimeout(() => {
-      initLiveMap();
-    }, 200);
-  }
-                })
-                .catch(() => {
-                  content.innerHTML = `
+                fetch(page)
+                  .then(res => {
+                    if (!res.ok) throw new Error("Page not found");
+                    return res.text();
+                  })
+                  .then(html => {
+                    content.innerHTML = html;
+                    history.pushState({ page }, "", "#" + page);
+                    setActiveMenu(page);
+                    if (page.includes('live-map')) {
+                      setTimeout(() => {
+                        initLiveMap();
+                      }, 200);
+                    }
+                  })
+                  .catch(() => {
+                    content.innerHTML = `
           <div class="alert alert-danger m-4">
             Failed to load page
           </div>
         `;
-                });
-            }
-
-            function setActiveMenu(page) {
-              document.querySelectorAll('.menu-item').forEach(item => {
-                item.classList.remove('active');
-              });
-
-              document.querySelectorAll('.menu-link').forEach(link => {
-                if (link.getAttribute('onclick')?.includes(page)) {
-                  link.closest('.menu-item').classList.add('active');
-                }
-              });
-            }
-
-            // Back / Forward support
-            window.onpopstate = function (e) {
-              if (e.state?.page) {
-                navigate(e.state.page);
+                  });
               }
-            };
-          </script>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+              function setActiveMenu(page) {
+                document.querySelectorAll('.menu-item').forEach(item => {
+                  item.classList.remove('active');
+                });
 
-<script>
-  let liveMap = null;
+                document.querySelectorAll('.menu-link').forEach(link => {
+                  if (link.getAttribute('onclick')?.includes(page)) {
+                    link.closest('.menu-item').classList.add('active');
+                  }
+                });
+              }
 
-  function openLiveMap() {
-    fetch('live-map.html')
-      .then(res => res.text())
-      .then(html => {
-        document.getElementById('page-content').innerHTML = html;
+              // Back / Forward support
+              window.onpopstate = function (e) {
+                if (e.state?.page) {
+                  navigate(e.state.page);
+                }
+              };
+            </script>
 
-        // Wait until DOM is updated
-        setTimeout(() => {
-          initLiveMap();
-        }, 150);
-      });
-  }
+            <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-  function initLiveMap() {
-    const container = document.getElementById('liveMapInner');
-    if (!container) {
-      console.error('liveMapInner not found');
-      return;
-    }
+            <script>
+              let liveMap = null;
 
-    // Prevent duplicate map creation
-    if (liveMap) {
-      liveMap.invalidateSize();
-      return;
-    }
+              function openLiveMap() {
+                fetch('live-map.html')
+                  .then(res => res.text())
+                  .then(html => {
+                    document.getElementById('page-content').innerHTML = html;
 
-    liveMap = L.map(container).setView([18.5204, 73.8567], 12);
+                    // Wait until DOM is updated
+                    setTimeout(() => {
+                      initLiveMap();
+                    }, 150);
+                  });
+              }
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(liveMap);
+              function initLiveMap() {
+                const container = document.getElementById('liveMapInner');
+                if (!container) {
+                  console.error('liveMapInner not found');
+                  return;
+                }
 
-    // Force resize
-    setTimeout(() => liveMap.invalidateSize(), 200);
-  }
-</script>
+                // Prevent duplicate map creation
+                if (liveMap) {
+                  liveMap.invalidateSize();
+                  return;
+                }
+
+                liveMap = L.map(container).setView([18.5204, 73.8567], 12);
+
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                  attribution: '&copy; OpenStreetMap contributors'
+                }).addTo(liveMap);
+
+                // Force resize
+                setTimeout(() => liveMap.invalidateSize(), 200);
+              }
+            </script>
+
+
+
+            <script>
+              async function loadDashboardData() {
+                try {
+                  const response = await fetch('http://localhost:3000/api/dashboard-stats');
+                  if (!response.ok) throw new Error('Network response was not ok');
+
+                  const data = await response.json();
+
+                  // --- Dashboard Cards ---
+                  document.querySelector('#workersActiveToday').textContent = data.workersActiveToday;
+                  document.querySelector('#totalWorkDoneToday').textContent = data.totalWorkDoneToday;
+                  document.querySelector('#workersOnLeave').textContent = data.workersOnLeave;
+                  document.querySelector('#operationalImpactZones').textContent = data.operationalImpactZones;
+                  document.querySelector('#complaintsToday').textContent = data.complaintsToday;
+
+                  // --- Field Operations Overview ---
+                  document.querySelector('#activeFieldStaff').textContent = data.workersActiveToday;
+                  document.querySelector('#attendanceTracked').textContent = data.attendanceTracked || '92%';
+                  document.querySelector('#tasksAssigned').textContent = data.tasksAssigned || data.totalWorkDoneToday;
+                  document.querySelector('#leaveRequests').textContent = data.workersOnLeave;
+                  document.querySelector('#dailyReports').textContent = data.dailyReports || '109';
+
+                  // --- Recent Activities ---
+                  const activitiesContainer = document.querySelector('#recentActivities');
+activitiesContainer.innerHTML = '';
+
+                  data.recentActivities.forEach(act => {
+                    let iconClass = 'bx bx-info-circle';
+                    let badge = '';
+                    let timeOrRequests = '';
+
+                    switch (act.type) {
+                      case 'Pickup Completed':
+                        iconClass = 'bx bx-check-circle';
+                        badge = `<span class="badge bg-label-success">${act.status}</span>`;
+                        timeOrRequests = `${act.zone} – ${act.requests} Requests`;
+                        break;
+                      case 'Pickup In Progress':
+                        iconClass = 'bx bx-time';
+                        badge = `<span class="badge bg-label-warning">${act.status}</span>`;
+                        timeOrRequests = `${act.zone} – ${act.requests} Requests`;
+                        break;
+                      case 'New User Registered':
+                        iconClass = 'bx bx-user-plus';
+                        timeOrRequests = act.zone;
+                        badge = `<span class="text-muted small">${act.time}</span>`;
+                        break;
+                      case 'Zone Added':
+                        iconClass = 'bx bx-map';
+                        timeOrRequests = `New Zone: ${act.zone}`;
+                        badge = `<span class="text-muted small">${act.time}</span>`;
+                        break;
+                      case 'Pickup Failed':
+                        iconClass = 'bx bx-error-circle';
+                        timeOrRequests = `${act.zone} – ${act.reason}`;
+                        badge = `<span class="badge bg-label-danger">${act.status}</span>`;
+                        break;
+                    }
+
+                    const li = document.createElement('li');
+                    li.className = 'd-flex align-items-center mb-6';
+                    li.innerHTML = `
+          <div class="avatar flex-shrink-0 me-3 bg-label-primary rounded">
+            <i class="${iconClass} icon-lg"></i>
+          </div>
+          <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+            <div class="me-2">
+              <small class="d-block text-muted">${act.type}</small>
+              <h6 class="fw-normal mb-0">${timeOrRequests}</h6>
+            </div>
+            ${badge}
+          </div>
+        `;
+                    activitiesContainer.appendChild(li);
+                  });
+
+                } catch (err) {
+                  console.error('Failed to load dashboard data from server', err);
+                  const errorEl = document.querySelector('#dashboardError');
+                  if (errorEl) errorEl.textContent = 'Failed to load dashboard data from server';
+                }
+              }
+
+              // Only call this once after DOM loads
+              document.addEventListener('DOMContentLoaded', loadDashboardData);
+            </script>
 
 
 
