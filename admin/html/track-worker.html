@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Workforce Management</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Boxicons -->
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+
+  
+  <div id="page-content">
+    <div class="row">
+      <div class="col-12">
+        <div class="card h-100">
+          <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold">Manage Worker</h4>
+    
+  </div>
+            <div class="card-body">
+              <h6 class="mb-3"><i class="bx bx-time-five me-1"></i> Attendance Tracking</h6>
+              <div class="table-responsive">
+                <table class="table table-bordered align-middle">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Worker Name</th>
+                      <th class="text-center">Check In</th>
+                      <th class="text-center">Check Out</th>
+                      <th class="text-center">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Ramesh Patil</td>
+                      <td class="text-center">09:05 AM</td>
+                      <td class="text-center">06:10 PM</td>
+                      <td class="text-center"><span class="badge bg-success">Present</span></td>
+                    </tr>
+                    <tr>
+                      <td>Suresh Kale</td>
+                      <td class="text-center">—</td>
+                      <td class="text-center">—</td>
+                      <td class="text-center"><span class="badge bg-danger">Absent</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="card-body border-top">
+              <h6 class="mb-3"><i class="bx bx-calendar-minus me-1"></i> Leave Requests</h6>
+              <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Employee</th>
+                      <th>Leave Type</th>
+                      <th>Date</th>
+                      <th class="text-center">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Anil Deshmukh</td>
+                      <td>Sick Leave</td>
+                      <td>18 Dec 2025</td>
+                      <td class="text-center">
+                        <button class="btn btn-sm btn-success me-1">Approve</button>
+                        <button class="btn btn-sm btn-danger">Reject</button>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Sunita Pawar</td>
+                      <td>Casual Leave</td>
+                      <td>19 Dec 2025</td>
+                      <td class="text-center">
+                        <button class="btn btn-sm btn-success me-1">Approve</button>
+                        <button class="btn btn-sm btn-danger">Reject</button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+
+            <!-- Task Assignment -->
+            
+            <div class="card-body border-top">
+              <h6 class="mb-3"><i class="bx bx-bar-chart-alt-2 me-1"></i> Work Reports</h6>
+              <div class="table-responsive">
+                <table class="table align-middle">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Worker</th>
+                      <th>Date</th>
+                      <th>Work Summary</th>
+                      <th class="text-center">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Ramesh Patil</td>
+                      <td>17 Dec 2025</td>
+                      <td>Completed waste collection in Zone A</td>
+                      <td class="text-center"><span class="badge bg-success">Reviewed</span></td>
+                    </tr>
+                    <tr>
+                      <td>Suresh Kale</td>
+                      <td>17 Dec 2025</td>
+                      <td>Partial completion due to vehicle issue</td>
+                      <td class="text-center"><span class="badge bg-warning">Pending</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <!-- Notifications -->
+            <!-- Task Planning Header -->
+            
+
+            <!-- Task Planning Table -->
+           
+
+            <!-- /Notifications -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- / Content -->
+
+    <!-- Footer -->
+
+    <!-- / Footer -->
+
+    <div class="content-backdrop fade"></div>
+  </div>
+  <!-- Content wrapper -->
+  </div>
+  <!-- / Layout page -->
+  </div>
+
+  <!-- Overlay -->
+  <div class="layout-overlay layout-menu-toggle"></div>
+  </div>
+  </div>
+  <!-- / Layout wrapper -->
+
+
+
+  <!-- Core JS -->
+
+  <script>
+    function loadPage(page) {
+      const content = document.getElementById('page-content');
+
+      // Optional loader
+      content.innerHTML = `
+      <div class="text-center py-5">
+        <div class="spinner-border text-primary"></div>
+      </div>
+    `;
+
+      fetch(page)
+        .then(res => {
+          if (!res.ok) throw new Error("Page not found");
+          return res.text();
+        })
+        .then(html => {
+          content.innerHTML = html;
+          window.history.pushState({}, "", page);
+        })
+        .catch(() => {
+          content.innerHTML = `
+          <div class="alert alert-danger">
+            Failed to load page
+          </div>
+        `;
+        });
+    }
+
+    // Handle browser back button
+    window.onpopstate = function () {
+      loadPage(location.pathname.split("/").pop());
+    };
+  </script>
+
+</body>
+
+</html>

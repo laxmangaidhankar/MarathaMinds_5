@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Reports & Analytics</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Boxicons -->
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
+  <link rel="stylesheet" href="reports.css">
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body>
+  
+<div class="row">
+  <div class="col-12">
+    <div class="card h-100">
+      <div class="card-header">
+<div class="container-fluid mt-3">
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold">Manage Map</h4>
+   
+  </div>
+  <!-- 🔹 TOP SUMMARY CARDS -->
+  <div class="row g-3 mb-3">
+    <div class="col-md-3">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h6 class="text-muted mb-1">Total Workers</h6>
+<h3 class="mb-0"><span id="totalWorkers">50</span></h3>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card shadow-sm border-success">
+        <div class="card-body">
+          <h6 class="text-muted mb-1">Inside Approved Area</h6>
+<h3 class="mb-0 text-success"><span id="insideApproved">47</span></h3>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card shadow-sm border-danger">
+        <div class="card-body">
+          <h6 class="text-muted mb-1">Outside Area</h6>
+<h3 class="mb-0 text-danger"><span id="outsideArea">3</span></h3>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card shadow-sm border-warning">
+        <div class="card-body">
+          <h6 class="text-muted mb-1">Inactive / No GPS</h6>
+<h3 class="mb-0 text-warning"><span id="inactiveWorkers">3</span></h3>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🔹 MAP + LEGEND -->
+  <div class="row g-3">
+    <!-- MAP -->
+    <div class="col-lg-9">
+      <div class="card shadow-sm h-100">
+        <div class="card-header">
+          <h5 class="mb-0">Live Workforce Map</h5>
+        </div>
+        <div class="card-body p-0">
+          <div id="liveMapInner" style="height:450px;width:100%"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LEGEND / INFO -->
+    <div class="col-lg-3">
+      <div class="card shadow-sm h-100">
+        <div class="card-header">
+          <h6 class="mb-0">Zone & Status Guide</h6>
+        </div>
+        <div class="card-body">
+          <div class="d-flex align-items-center mb-3">
+            <span class="badge bg-success me-2">&nbsp;</span> Inside Approved Radius
+          </div>
+          <div class="d-flex align-items-center mb-3">
+            <span class="badge bg-danger me-2">&nbsp;</span> Outside Approved Radius
+          </div>
+          <div class="d-flex align-items-center mb-3">
+            <span class="badge bg-warning me-2">&nbsp;</span> Inactive / GPS Off
+          </div>
+          <hr>
+          <p class="small text-muted mb-0">
+            Admin can monitor real-time worker locations, ensure attendance within assigned zones, and take action for policy violations.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+</div>
+</div>
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  // Initialize map
+  const map = L.map('liveMapInner').setView([18.5204, 73.8567], 12); // Pune
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map);
+
+  // Define zones with colors
+  const zones = [
+    { name: "Green Zone", center: [18.525, 73.85], radius: 1200, color: "green" },
+    { name: "Red Zone", center: [18.51, 73.86], radius: 1000, color: "red" },
+    { name: "Yellow Zone", center: [18.535, 73.87], radius: 800, color: "yellow" }
+  ];
+
+  // Function to generate random points inside a circle (zone)
+  function randomPointsInCircle(center, radius, count) {
+    const points = [];
+    for (let i = 0; i < count; i++) {
+      const r = radius * Math.sqrt(Math.random());
+      const theta = Math.random() * 2 * Math.PI;
+      const dx = r * Math.cos(theta);
+      const dy = r * Math.sin(theta);
+      // Approx conversion from meters to lat/lng
+      const lat = center[0] + (dy / 111320); // 1 deg latitude ~111.32 km
+      const lng = center[1] + (dx / (111320 * Math.cos(center[0] * Math.PI/180)));
+      points.push([lat, lng]);
+    }
+    return points;
+  }
+
+  zones.forEach(zone => {
+    // Draw the zone circle
+    L.circle(zone.center, {
+      color: zone.color,
+      fillColor: zone.color,
+      fillOpacity: 0.2,
+      radius: zone.radius,
+      weight: 2
+    }).addTo(map).bindPopup(`<strong>${zone.name}</strong>`);
+
+    // Add zone center marker
+    L.marker(zone.center).addTo(map).bindPopup(`${zone.name} Center`);
+
+    // Generate 20 random markers inside the zone
+    const markers = randomPointsInCircle(zone.center, zone.radius, 20);
+    markers.forEach((coords, index) => {
+      L.circleMarker(coords, {
+        radius: 6,
+        fillColor: zone.color,
+        color: "#000",
+        weight: 1,
+        fillOpacity: 0.8
+      }).addTo(map)
+        .bindPopup(`<strong>${zone.name} Worker ${index + 1}</strong>`);
+    });
+  });
+</script>
+<script>
+async function loadReportsData() {
+  try {
+    const response = await fetch('http://localhost:3000/api/reports');
+    if (!response.ok) throw new Error('Server error');
+
+    const data = await response.json();
+
+    // ✅ Update top summary cards (MATCH SERVER KEYS)
+    document.getElementById('totalWorkers').textContent = data.totalWorkers;
+    document.getElementById('insideApproved').textContent = data.insideApproved;
+    document.getElementById('outsideArea').textContent = data.outsideArea;
+    document.getElementById('inactiveWorkers').textContent = data.inactiveWorkers;
+
+  } catch (err) {
+    console.error('Failed to load reports data', err);
+  }
+}
+
+// Load data when page loads
+document.addEventListener('DOMContentLoaded', loadReportsData);
+</script>
+
+
+
+</body>
+</html>

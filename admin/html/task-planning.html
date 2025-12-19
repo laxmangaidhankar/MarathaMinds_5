@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Daily Task Planning</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Boxicons -->
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+    
+  <div id="page-content">
+    <div class="row">
+      <div class="col-12">
+        <div class="card h-100">
+          <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold">Task Planning Manager</h4>
+    <button class="btn btn-primary btn-sm">
+      <i class="bx bx-user-plus"></i> Add Worker
+    </button>
+  </div>
+<div class="container mt-4">
+
+      <h6 class="mb-3"><i class="bx bx-task me-1"></i> Daily Task Assignment</h6>
+      <div class="row g-3">
+        <div class="col-md-4">
+          <label class="form-label">Select Worker</label>
+          <select class="form-select" id="workers">
+            <option disabled selected>Loading...</option>
+          </select>
+        </div>
+        <div class="col-md-5">
+          <label class="form-label">Task Description</label>
+          <input type="text" class="form-control" id="taskInput" placeholder="Enter task details">
+        </div>
+        <div class="col-md-3 d-flex align-items-end">
+          <button class="btn btn-primary w-100" id="assignBtn">Assign Task</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TASK LIST -->
+  <div class="card">
+    <div class="card-body">
+      <h5 class="mb-3">Assigned Tasks</h5>
+      <div class="table-responsive">
+        <table class="table table-bordered">
+          <thead class="table-light">
+            <tr>
+              <th>Worker</th>
+              <th>Task</th>
+              <th>Status</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody id="taskTable">
+            <tr>
+              <td colspan="4" class="text-center text-muted">Loading tasks...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+    <div class="card-body">
+              <h5 class="mb-1">Daily Task Planning</h5>
+              <span class="card-subtitle">
+                Plan, assign, and track daily tasks for workers.
+              </span>
+              <div class="error"></div>
+            </div>
+     <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th class="text-nowrap">Task Type</th>
+                    <th class="text-nowrap text-center">Monday</th>
+                    <th class="text-nowrap text-center">Tuesday</th>
+                    <th class="text-nowrap text-center">Wednesday</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="text-nowrap text-heading">Zone A Collection</td>
+                    <td>
+                      <div class="form-check mb-0 d-flex justify-content-center align-items-center">
+                        <input class="form-check-input" type="checkbox" checked />
+                      </div>
+                    </td>
+                    <td>
+                      <div class="form-check mb-0 d-flex justify-content-center align-items-center">
+                        <input class="form-check-input" type="checkbox" />
+                      </div>
+                    </td>
+                    <td>
+                      <div class="form-check mb-0 d-flex justify-content-center align-items-center">
+                        <input class="form-check-input" type="checkbox" checked />
+                      </div>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td class="text-nowrap text-heading">Zone B Collection</td>
+                    <td>
+                      <div class="form-check mb-0 d-flex justify-content-center align-items-center">
+                        <input class="form-check-input" type="checkbox" />
+                      </div>
+                    </td>
+                    <td>
+                      <div class="form-check mb-0 d-flex justify-content-center align-items-center">
+                        <input class="form-check-input" type="checkbox" checked />
+                      </div>
+                    </td>
+                    <td>
+                      <div class="form-check mb-0 d-flex justify-content-center align-items-center">
+                        <input class="form-check-input" type="checkbox" />
+                      </div>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td class="text-nowrap text-heading">Vehicle Maintenance</td>
+                    <td>
+                      <div class="form-check mb-0 d-flex justify-content-center align-items-center">
+                        <input class="form-check-input" type="checkbox" />
+                      </div>
+                    </td>
+                    <td>
+                      <div class="form-check mb-0 d-flex justify-content-center align-items-center">
+                        <input class="form-check-input" type="checkbox" />
+                      </div>
+                    </td>
+                    <td>
+                      <div class="form-check mb-0 d-flex justify-content-center align-items-center">
+                        <input class="form-check-input" type="checkbox" checked />
+                      </div>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td class="text-nowrap text-heading">Report Submission</td>
+                    <td>
+                      <div class="form-check mb-0 d-flex justify-content-center align-items-center">
+                        <input class="form-check-input" type="checkbox" checked />
+                      </div>
+                    </td>
+                    <td>
+                      <div class="form-check mb-0 d-flex justify-content-center align-items-center">
+                        <input class="form-check-input" type="checkbox" checked />
+                      </div>
+                    </td>
+                    <td>
+                      <div class="form-check mb-0 d-flex justify-content-center align-items-center">
+                        <input class="form-check-input" type="checkbox" checked />
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Task Planning Settings -->
+            <div class="card-body">
+              <h6 class="text-body mb-6">Task Planning Preferences</h6>
+              <form action="javascript:void(0);">
+                <div class="row">
+                  <div class="col-sm-6">
+                    <select class="form-select">
+                      <option selected>Manual day-wise planning</option>
+                      <option>Auto plan based on workload</option>
+                      <option>Repeat same tasks weekly</option>
+                    </select>
+                  </div>
+                  <div class="mt-6">
+                    <button type="submit" class="btn btn-primary me-3">Save Plan</button>
+                    <button type="reset" class="btn btn-outline-secondary">Discard</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+  </div>
+
+</div>
+
+<script>
+const API = "http://localhost:3000";
+
+document.addEventListener("DOMContentLoaded", () => {
+  
+  const workersSelect = document.getElementById("workers");
+  const taskInput = document.getElementById("taskInput");
+  const assignBtn = document.getElementById("assignBtn");
+  const taskTable = document.getElementById("taskTable");
+
+  /* Load workers for dropdown */
+  async function loadWorkers() {
+    try {
+      const res = await fetch(`${API}/api/workers`);
+      const workers = await res.json();
+
+      workersSelect.innerHTML = `<option disabled selected>Choose Worker</option>`;
+      workers.forEach(w => {
+        const opt = document.createElement("option");
+        opt.value = w.id;
+        opt.textContent = w.name;
+        workersSelect.appendChild(opt);
+      });
+    } catch (err) {
+      console.error(err);
+      workersSelect.innerHTML = `<option disabled selected>Error loading workers</option>`;
+    }
+  }
+
+  /* Load tasks */
+  async function loadTasks() {
+    try {
+      const res = await fetch(`${API}/api/tasks`);
+      const tasks = await res.json();
+
+      taskTable.innerHTML = "";
+      if (tasks.length === 0) {
+        taskTable.innerHTML = `<tr><td colspan="4" class="text-center text-muted">No tasks assigned</td></tr>`;
+        return;
+      }
+
+      tasks.forEach(t => {
+        taskTable.innerHTML += `
+          <tr>
+            <td>${t.workerName}</td>
+            <td>${t.task}</td>
+            <td><span class="badge ${t.status === 'Assigned' ? 'bg-info' : 'bg-success'}">${t.status}</span></td>
+            <td>${t.date}</td>
+          </tr>`;
+      });
+    } catch (err) {
+      console.error("Failed to load tasks", err);
+      taskTable.innerHTML = `<tr><td colspan="4" class="text-center text-danger">Error loading tasks</td></tr>`;
+    }
+  }
+
+  /* Assign task */
+  async function assignTask() {
+    const workerId = workersSelect.value;
+    const task = taskInput.value.trim();
+
+    if (!workerId || !task) {
+      alert("Please select worker and enter task");
+      return;
+    }
+
+    try {
+      await fetch(`${API}/api/assign-task`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ workerId, task })
+      });
+      taskInput.value = "";
+      loadTasks();
+    } catch (err) {
+      console.error("Failed to assign task", err);
+    }
+  }
+
+  // Event listener
+  assignBtn.addEventListener("click", assignTask);
+
+  // Initial load
+  loadWorkers();
+  loadTasks();
+
+});
+</script>
+
+</body>
+</html>
